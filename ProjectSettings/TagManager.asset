@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 3
   tags:
   - UI Menu
+  - CinemachineTarget
+  - NPC
+  - UI
+  - UI Dialogue
   layers:
   - Default
   - TransparentFX
