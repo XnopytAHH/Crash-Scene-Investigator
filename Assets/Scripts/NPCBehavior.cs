@@ -1,4 +1,5 @@
 using System;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class NPCBehavior : MonoBehaviour
@@ -14,5 +15,11 @@ public class NPCBehavior : MonoBehaviour
             return dialogueLines[dialogueIndex];
         }
         return null;
+    }
+    void Update()
+    {
+        Vector3 directiontoplayer = (GameObject.FindWithTag("Player").transform.position - gameObject.transform.position)*-1;
+        directiontoplayer.y = 0; // Keep the NPC facing horizontally
+        gameObject.transform.rotation = Quaternion.LookRotation(directiontoplayer);
     }
 }

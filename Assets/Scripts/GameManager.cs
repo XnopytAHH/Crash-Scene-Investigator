@@ -4,6 +4,8 @@ using UnityEngine.InputSystem.Controls;
 using StarterAssets;
 using UnityEngine.UI;
 using TMPro;
+using Unity.Cinemachine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,8 +14,23 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     [SerializeField]
     private AudioSource audioSource;
+    /// <summary>
+    /// currentLevel is an integer that represents the current level of the game.
+    /// </summary>
+    public int currentLevel = 0;
+    /// <summary>
+    /// pauseMenu is the canvas for the pause menu.
+    /// </summary>
+    [SerializeField]
+    public Canvas pauseMenu;
+    /// <summary>
+    /// player is a reference to the player GameObject.
+    /// </summary>
+    private GameObject player;
     void Awake()
     {
+        OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single); // Initialize the pause menu when the scene is loaded
+        
         Canvas dialogueUI = GameObject.FindWithTag("UI Dialogue").GetComponent<Canvas>();
         audioSource = gameObject.GetComponent<AudioSource>();
         dialogueUI.enabled = false;
@@ -27,13 +44,23 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             Instance = this;
         }
-
-
     }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Update()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to the scene loaded event
+    }
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        pauseMenu.enabled = false; // Disable the pause menu at the start
+        player = GameObject.FindWithTag("Player");
+    }
     public void StartGame()
     {
         Debug.Log("Game Started");
+        currentLevel = 1; // Set the current level to 1 when the game starts
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Level 1"); // Load the first level
+        Time.timeScale = 1; // Ensure the game is running at normal speed
+        Cursor.lockState = CursorLockMode.Locked; // Lock the cursor to the game window
     }
     public void ExitGame()
     {
@@ -46,26 +73,25 @@ public class GameManager : MonoBehaviour
     {
         GameObject player = GameObject.FindWithTag("Player");
         Canvas dialogueUI = GameObject.FindWithTag("UI Dialogue").GetComponent<Canvas>();
-        dialogueUI.transform.GetChild(2).transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = npc.name;
+        dialogueUI.transform.GetChild(1).transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = npc.name;
         player.GetComponent<FirstPersonController>().enabled = false;
         dialogueUI.enabled = true; // Show the dialogue UI
         foreach (DialogueLine line in dialogueLines.dialogueLines)
         {
             bool linePrinting = true; // Flag to check if the player is typing
-            dialogueUI.transform.GetChild(0).GetComponent<Image>().sprite = line.CharacterSprite;
-            yield return stepThruDialogue(dialogueUI.transform.GetChild(1).transform.GetChild(0).GetComponent<TextMeshProUGUI>(), dialogueSpeed, line);
+            yield return stepThruDialogue(dialogueUI.transform.GetChild(0).transform.GetChild(0).GetComponent<TextMeshProUGUI>(), dialogueSpeed, line);
             linePrinting = false; // Set the flag to false after the line is printed
-            
-            yield return new WaitUntil(() => !linePrinting && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))); 
+
+            yield return new WaitUntil(() => !linePrinting && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)));
             yield return new WaitForSeconds(0.1f); // Small delay to prevent immediate re-triggering
-            
-            
+
+
         }
         player.GetComponent<PlayerBehavior>().isBusy = false; // Set the player as not busy after dialogue
         player.GetComponent<FirstPersonController>().enabled = true;
         dialogueUI.enabled = false; // Hide the dialogue UI
     }
-    private IEnumerator stepThruDialogue(TextMeshProUGUI textbox,  float delay, DialogueLine line)
+    private IEnumerator stepThruDialogue(TextMeshProUGUI textbox, float delay, DialogueLine line)
     {
         textbox.text = ""; // Clear the textbox before starting
         foreach (char letter in line.Line.ToCharArray())
@@ -82,10 +108,31 @@ public class GameManager : MonoBehaviour
             {
                 audioSource.PlayOneShot(line.AudioClip); // Play the audio clip for the letter
             }
-            
+
             textbox.text += letter; // Add one letter at a time
-            
+
             yield return new WaitForSeconds(delay); // Wait for the specified delay
         }
+    }
+    public void pauseGame()
+    {
+        Time.timeScale = 0; // Pause the game
+        Cursor.lockState = CursorLockMode.None; // Unlock the cursor
+        pauseMenu.enabled = true; // Enable the pause menu
+        player.GetComponent<FirstPersonController>().enabled = false; // Disable the character controller to prevent movement
+        
+    }
+    public void resumeGame()
+    {
+        Time.timeScale = 1; // Resume the game
+        Cursor.lockState = CursorLockMode.Locked; // Lock the cursor again
+        pauseMenu.enabled = false; // Disable the pause menu
+        player.GetComponent<FirstPersonController>().enabled = true; // Enable the character controller
+    }
+    public void returnToMainMenu()
+    {
+        Time.timeScale = 1; // Ensure the game is running at normal speed
+        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu"); // Load the main menu scene
+        Cursor.lockState = CursorLockMode.None; // Unlock the cursor
     }
 }
