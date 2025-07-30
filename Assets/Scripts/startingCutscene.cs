@@ -22,6 +22,7 @@ public class startingCutscene : MonoBehaviour
         backgroundAnimator = fadeBackground.GetComponent<Animator>();
         menuAnimator = GameObject.FindWithTag("UI Menu").GetComponent<Animator>();
         companyLogo.GetComponent<Image>().CrossFadeAlpha(0.0f, 0f, false);
+        menuAnimator.SetBool("MenuIn", false); // Ensure the menu is not visible at the start
         StartCoroutine(StartIntro());
     }
 

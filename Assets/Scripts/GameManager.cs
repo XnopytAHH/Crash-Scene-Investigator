@@ -24,13 +24,17 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     public Canvas pauseMenu;
     /// <summary>
+    /// mainMenu is the canvas for the main menu.
+    /// </summary>
+    [SerializeField]
+    public Canvas mainMenu;
+    /// <summary>
     /// player is a reference to the player GameObject.
     /// </summary>
     private GameObject player;
     void Awake()
     {
         OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single); // Initialize the pause menu when the scene is loaded
-        
         Canvas dialogueUI = GameObject.FindWithTag("UI Dialogue").GetComponent<Canvas>();
         audioSource = gameObject.GetComponent<AudioSource>();
         dialogueUI.enabled = false;
@@ -48,6 +52,15 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to the scene loaded event
+
+        if (SceneManager.GetActiveScene().name != "MainMenu")
+        {
+            mainMenu.enabled = false; // Disable the main menu if the game has started
+        }
+        else
+        {
+            mainMenu.enabled = true; // Enable the main menu if the game has not started
+        }
     }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -124,15 +137,19 @@ public class GameManager : MonoBehaviour
     }
     public void resumeGame()
     {
-        Time.timeScale = 1; // Resume the game
         Cursor.lockState = CursorLockMode.Locked; // Lock the cursor again
         pauseMenu.enabled = false; // Disable the pause menu
-        player.GetComponent<FirstPersonController>().enabled = true; // Enable the character controller
+        Time.timeScale = 1; // Resume the game
+        if (!player.GetComponent<PlayerBehavior>().isBusy)
+        {
+            player.GetComponent<FirstPersonController>().enabled = true; // Enable the character controller
+        }
     }
     public void returnToMainMenu()
     {
         Time.timeScale = 1; // Ensure the game is running at normal speed
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu"); // Load the main menu scene
+        currentLevel = 0; // Reset the current level
         Cursor.lockState = CursorLockMode.None; // Unlock the cursor
     }
 }
