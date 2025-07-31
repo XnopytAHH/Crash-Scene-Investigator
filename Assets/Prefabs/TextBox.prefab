@@ -167,8 +167,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 26
+  m_fontSizeBase: 26
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -205,7 +205,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -110.35736, y: 0, z: -110.66437, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -220,6 +220,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2443580219079478653}
+  - component: {fileID: 5455007754209146410}
   m_Layer: 5
   m_Name: TextBox
   m_TagString: Untagged
@@ -248,3 +249,15 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 28.999985}
   m_SizeDelta: {x: -1487.8, y: -984.40796}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5455007754209146410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8586549653406910690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 145d93f2a9284ac4ba1b9fdf3e5c1325, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

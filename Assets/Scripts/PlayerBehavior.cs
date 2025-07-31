@@ -48,14 +48,16 @@ public class PlayerBehavior : MonoBehaviour
         RaycastHit hitInfo;
         if (Physics.Raycast(spawnPoint.position, spawnPoint.forward, out hitInfo, interactDistance))
         {
-
+            
             if (hitInfo.collider.CompareTag("NPC"))
             {
+                
                 currentNPC = hitInfo.collider.gameObject; // Set the current NPC to the hit object
                 canInteract = true; // Allow interaction with the NPC
             }
             else if (hitInfo.collider.CompareTag("BackgroundNPC"))
             {
+                
                 currentNPC = hitInfo.collider.gameObject; // Set the current background NPC to the hit object
                 canInteract = true; // Allow interaction with the background NPC
             }

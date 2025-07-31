@@ -4917,6 +4917,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2083804136}
     - target: {fileID: 6397589910861383834, guid: 6c328754549c72c46aaaf4ed89c2635a, type: 3}
+      propertyPath: textOffset
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6397589910861383834, guid: 6c328754549c72c46aaaf4ed89c2635a, type: 3}
       propertyPath: playerUICanvas
       value: 
       objectReference: {fileID: 1236626532}
@@ -5766,7 +5770,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collectibleType: 
   color1: {r: 0, g: 0.8962264, b: 0.056351975, a: 1}
-  collectibleAudioClip: {fileID: 8300000, guid: bd45bfd5694cfd64c8a3e1e9a32d7a9d, type: 3}
+  collectibleAudioClip: {fileID: 8300000, guid: 141bb2449e4634a4bb74117662ba52e1, type: 3}
   shaderName: OutlineMaterial
 --- !u!43 &1389807659
 Mesh:
@@ -6749,6 +6753,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2083804136}
     - target: {fileID: 6397589910861383834, guid: 6c328754549c72c46aaaf4ed89c2635a, type: 3}
+      propertyPath: textOffset
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6397589910861383834, guid: 6c328754549c72c46aaaf4ed89c2635a, type: 3}
       propertyPath: playerUICanvas
       value: 
       objectReference: {fileID: 1236626532}
@@ -6866,6 +6874,10 @@ PrefabInstance:
       propertyPath: endPoint
       value: 
       objectReference: {fileID: 2083804136}
+    - target: {fileID: 6397589910861383834, guid: 6c328754549c72c46aaaf4ed89c2635a, type: 3}
+      propertyPath: textOffset
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 6397589910861383834, guid: 6c328754549c72c46aaaf4ed89c2635a, type: 3}
       propertyPath: playerUICanvas
       value: 
@@ -7307,7 +7319,7 @@ GameObject:
   - component: {fileID: 2031555472}
   - component: {fileID: 2031555473}
   m_Layer: 0
-  m_Name: Beeg Boss
+  m_Name: Big Boss
   m_TagString: NPC
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7448,15 +7460,15 @@ MonoBehaviour:
   dialogueLines:
   - dialogueLevel: 0
     dialogueLines:
-    - AudioClip: {fileID: 8300000, guid: 76f4dd0f627d95643bd88b86dcfa15fe, type: 3}
+    - AudioClip: {fileID: 8300000, guid: 1fca5854c101aee48bbc62b980347fe1, type: 3}
       Line: Hi I is death, i am death and my name is death, i am the actual death
         and the one and only death
-    - AudioClip: {fileID: 8300000, guid: 96872af1984d0f7418dc94b09ef25d8d, type: 3}
-      Line: WTF why did i turn into the logo, what is going on
-    - AudioClip: {fileID: 8300000, guid: ff464f460cd7aa74da620c26037993f2, type: 3}
-      Line: Oh i see hes using this for testing
-    - AudioClip: {fileID: 8300000, guid: bd45bfd5694cfd64c8a3e1e9a32d7a9d, type: 3}
-      Line: Oppa Gangnam style
+    - AudioClip: {fileID: 8300000, guid: 1fca5854c101aee48bbc62b980347fe1, type: 3}
+      Line: This text line needs to be replaced
+    - AudioClip: {fileID: 8300000, guid: 1fca5854c101aee48bbc62b980347fe1, type: 3}
+      Line: What day is it
+    - AudioClip: {fileID: 8300000, guid: 1fca5854c101aee48bbc62b980347fe1, type: 3}
+      Line: Does my voice sound ok
 --- !u!1 &2083804135
 GameObject:
   m_ObjectHideFlags: 0
@@ -7693,6 +7705,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 71873614413578486, guid: 6c328754549c72c46aaaf4ed89c2635a, type: 3}
+      propertyPath: m_Constraints
+      value: 126
+      objectReference: {fileID: 0}
     - target: {fileID: 5178717225587227053, guid: 6c328754549c72c46aaaf4ed89c2635a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 49.4
@@ -7738,6 +7754,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2083804136}
     - target: {fileID: 6397589910861383834, guid: 6c328754549c72c46aaaf4ed89c2635a, type: 3}
+      propertyPath: textOffset
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6397589910861383834, guid: 6c328754549c72c46aaaf4ed89c2635a, type: 3}
       propertyPath: playerUICanvas
       value: 
       objectReference: {fileID: 1236626532}
@@ -7758,6 +7778,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 789064453724692966, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 5d9c22718aec6404cb2e78a094ff18d0, type: 3}
     - target: {fileID: 2281943588311178052, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.021837054
@@ -7802,9 +7826,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
-    - target: {fileID: 5804252994488658367, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
-      propertyPath: m_IsActive
-      value: 1
+    - target: {fileID: 6755578954603415680, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 199.165
+      objectReference: {fileID: 0}
+    - target: {fileID: 6755578954603415680, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 179.896
+      objectReference: {fileID: 0}
+    - target: {fileID: 6755578954603415680, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 249.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6755578954603415680, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 44.1
       objectReference: {fileID: 0}
     - target: {fileID: 6815789473584377297, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -7829,7 +7865,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2640714946779360538, guid: d3195571e2e90e3428b15c5b1a80d706, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.8216661
+      value: 50.9
       objectReference: {fileID: 0}
     - target: {fileID: 2640714946779360538, guid: d3195571e2e90e3428b15c5b1a80d706, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7837,7 +7873,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2640714946779360538, guid: d3195571e2e90e3428b15c5b1a80d706, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -9.169173
+      value: -28
       objectReference: {fileID: 0}
     - target: {fileID: 2640714946779360538, guid: d3195571e2e90e3428b15c5b1a80d706, type: 3}
       propertyPath: m_LocalRotation.w

@@ -32,6 +32,10 @@ public class GameManager : MonoBehaviour
     /// player is a reference to the player GameObject.
     /// </summary>
     private GameObject player;
+    /// <summary>
+    /// currentAudio is an AudioClip that holds the audio for the current dialogue line.
+    /// </summary>
+    private AudioClip currentAudio;
     void Awake()
     {
         OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single); // Initialize the pause menu when the scene is loaded
@@ -119,6 +123,7 @@ public class GameManager : MonoBehaviour
             }
             if (letter != ' ') // If the letter is a space, skip the delay
             {
+                audioSource.pitch = Random.Range(0.97f, 1.03f); // Randomize the pitch for variation
                 audioSource.PlayOneShot(line.AudioClip); // Play the audio clip for the letter
             }
 
