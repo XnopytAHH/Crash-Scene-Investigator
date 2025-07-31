@@ -54,6 +54,11 @@ public class PlayerBehavior : MonoBehaviour
                 currentNPC = hitInfo.collider.gameObject; // Set the current NPC to the hit object
                 canInteract = true; // Allow interaction with the NPC
             }
+            else if (hitInfo.collider.CompareTag("BackgroundNPC"))
+            {
+                currentNPC = hitInfo.collider.gameObject; // Set the current background NPC to the hit object
+                canInteract = true; // Allow interaction with the background NPC
+            }
             else if (hitInfo.collider.CompareTag("Collectible"))
             {
                 currentCollectible = hitInfo.collider.gameObject; // Set the current collectible to the hit object
@@ -95,10 +100,20 @@ public class PlayerBehavior : MonoBehaviour
                 // Check if the player has detected a coin or a door
                 if (currentNPC != null)
                 {
+                    if (currentNPC.CompareTag("BackgroundNPC"))
+                    {
+                        // If the NPC is a background NPC, show dialogue
+                        Debug.Log("Interacting with Background NPC: " + currentNPC.name);
+                        StartCoroutine(currentNPC.GetComponent<PedestrianBehaviour>().ShowDialogue());
+                    }
+                    else
+                    {
+                        // If the NPC is an interactive NPC, start dialogue
                     Debug.Log("Interacting with NPC: " + currentNPC.name);
                     Dialogue currentDialogueLines = currentNPC.GetComponent<NPCBehavior>().getNPCLines();
                     isBusy = true; // Set the player as busy to prevent further interactions
                     StartCoroutine(GameManager.Instance.NPCDialogue(currentNPC, currentDialogueLines));
+                    }
                 }
                 else if (currentCollectible != null)
                 {
