@@ -2,6 +2,9 @@ using System.Collections;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using UnityEngine.InputSystem;
+using StarterAssets;
+using Unity.VisualScripting;
 /// <summary>
 /// PlayerBehavior is a MonoBehaviour that handles player interactions with NPCs and objects in the game.
 /// </summary>
@@ -37,9 +40,20 @@ public class PlayerBehavior : MonoBehaviour
     /// playerInventory is a reference to the player's inventory, which is used to manage collected items.
     /// </summary>
     public List<string> playerInventory;
+    /// <summary>
+    /// caseFile is a gameObject that represents the player's case file, which can be used to store information about the player's progress or collected items.
+    /// </summary>
+    [SerializeField]
+    GameObject caseFile; // Reference to the player's case file
+    /// <summary>
+    /// starterAssets is a reference to the StarterAssetsInputs component, which is used to handle player input.
+    /// </summary>
+    private StarterAssetsInputs starterAssets; // Reference to the StarterAssetsInputs component for player input handling
     void Start()
     {
         playerInventory = new List<string>();
+        starterAssets = GetComponent<StarterAssetsInputs>(); // Get the StarterAssetsInputs component
+        caseFile.SetActive(false); // Ensure the case file is initially hidden
     }
 
     // Update is called once per frame
@@ -48,16 +62,16 @@ public class PlayerBehavior : MonoBehaviour
         RaycastHit hitInfo;
         if (Physics.Raycast(spawnPoint.position, spawnPoint.forward, out hitInfo, interactDistance))
         {
-            
+
             if (hitInfo.collider.CompareTag("NPC"))
             {
-                
+
                 currentNPC = hitInfo.collider.gameObject; // Set the current NPC to the hit object
                 canInteract = true; // Allow interaction with the NPC
             }
             else if (hitInfo.collider.CompareTag("BackgroundNPC"))
             {
-                
+
                 currentNPC = hitInfo.collider.gameObject; // Set the current background NPC to the hit object
                 canInteract = true; // Allow interaction with the background NPC
             }
@@ -111,10 +125,10 @@ public class PlayerBehavior : MonoBehaviour
                     else
                     {
                         // If the NPC is an interactive NPC, start dialogue
-                    Debug.Log("Interacting with NPC: " + currentNPC.name);
-                    Dialogue currentDialogueLines = currentNPC.GetComponent<NPCBehavior>().getNPCLines();
-                    isBusy = true; // Set the player as busy to prevent further interactions
-                    StartCoroutine(GameManager.Instance.NPCDialogue(currentNPC, currentDialogueLines));
+                        Debug.Log("Interacting with NPC: " + currentNPC.name);
+                        Dialogue currentDialogueLines = currentNPC.GetComponent<NPCBehavior>().getNPCLines();
+                        isBusy = true; // Set the player as busy to prevent further interactions
+                        StartCoroutine(GameManager.Instance.NPCDialogue(currentNPC, currentDialogueLines));
                     }
                 }
                 else if (currentCollectible != null)
@@ -147,5 +161,22 @@ public class PlayerBehavior : MonoBehaviour
     void OnPause()
     {
         GameManager.Instance.pauseGame();
+    }
+    void OnOpenInventory()
+    {
+        caseFile.SetActive(!caseFile.activeSelf); // Toggle the visibility of the case file
+        if (caseFile.activeSelf)
+        {
+            Cursor.lockState = CursorLockMode.None; // Unlock the cursor when the case file is open
+            starterAssets.cursorInputForLook = false; // Disable mouse look input when the case file is open
+            GameManager.Instance.openCaseFile(); // Call the method to open the case file
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked; // Lock the cursor when the case file is closed
+            starterAssets.cursorInputForLook = true; // Re-enable mouse look input when the case file is closed
+            GameManager.Instance.closeCaseFile(); // Call the method to close the case file
+        }
+
     }
 }

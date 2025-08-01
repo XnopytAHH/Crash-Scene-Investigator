@@ -237,6 +237,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: file
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f74011b126ba2634b8e2b66ec8adbef6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -446,6 +450,7 @@ MonoBehaviour:
   interactDistance: 3
   isBusy: 0
   playerInventory: []
+  caseFile: {fileID: 1274497092199128417}
 --- !u!54 &2564806860760448486
 Rigidbody:
   m_ObjectHideFlags: 0

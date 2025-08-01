@@ -36,10 +36,16 @@ public class GameManager : MonoBehaviour
     /// currentAudio is an AudioClip that holds the audio for the current dialogue line.
     /// </summary>
     private AudioClip currentAudio;
+    /// <summary>
+    /// caseFileCanvas is a reference to the case file canvas.
+    /// </summary>
+    private Canvas caseFileCanvas;
     void Awake()
     {
         OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single); // Initialize the pause menu when the scene is loaded
         Canvas dialogueUI = GameObject.FindWithTag("UI Dialogue").GetComponent<Canvas>();
+        caseFileCanvas = GameObject.FindWithTag("CaseFileUI").GetComponent<Canvas>();
+        caseFileCanvas.enabled = false; // Hide the case file canvas at the start
         audioSource = gameObject.GetComponent<AudioSource>();
         dialogueUI.enabled = false;
         if (Instance != null && Instance != this)
@@ -70,6 +76,12 @@ public class GameManager : MonoBehaviour
     {
         pauseMenu.enabled = false; // Disable the pause menu at the start
         player = GameObject.FindWithTag("Player");
+        //loop through all toggles and set them to false
+        Toggle[] toggles = GameObject.FindObjectsByType<Toggle>(FindObjectsSortMode.None);
+        foreach (Toggle toggle in toggles)
+        {
+            toggle.isOn = false; // Set all toggles to false
+        }
     }
     public void StartGame()
     {
@@ -138,7 +150,7 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None; // Unlock the cursor
         pauseMenu.enabled = true; // Enable the pause menu
         player.GetComponent<FirstPersonController>().enabled = false; // Disable the character controller to prevent movement
-        
+
     }
     public void resumeGame()
     {
@@ -156,5 +168,14 @@ public class GameManager : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu"); // Load the main menu scene
         currentLevel = 0; // Reset the current level
         Cursor.lockState = CursorLockMode.None; // Unlock the cursor
+    }
+    public void openCaseFile()
+    {
+        
+        caseFileCanvas.enabled = true; // Show the case file canvas
+    }
+    public void closeCaseFile()
+    {
+        caseFileCanvas.enabled = false; // Hide the case file canvas
     }
 }
