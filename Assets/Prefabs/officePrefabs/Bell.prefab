@@ -52,9 +52,33 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 6b5cbbf26ee72114dac38ab53fd301fc, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: df03424bccc76c44bab94f6d1ff9f83b, type: 2}
+    - target: {fileID: -3422945125158375759, guid: 6b5cbbf26ee72114dac38ab53fd301fc, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 6b5cbbf26ee72114dac38ab53fd301fc, type: 3}
       propertyPath: m_Name
       value: Bell
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6b5cbbf26ee72114dac38ab53fd301fc, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2854516104835284063, guid: 6b5cbbf26ee72114dac38ab53fd301fc, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: df03424bccc76c44bab94f6d1ff9f83b, type: 2}
+    - target: {fileID: 5308698749824670199, guid: 6b5cbbf26ee72114dac38ab53fd301fc, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: df03424bccc76c44bab94f6d1ff9f83b, type: 2}
+    - target: {fileID: 7290660744037682375, guid: 6b5cbbf26ee72114dac38ab53fd301fc, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

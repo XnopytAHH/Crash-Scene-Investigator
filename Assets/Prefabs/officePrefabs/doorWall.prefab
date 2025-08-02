@@ -52,10 +52,26 @@ PrefabInstance:
       propertyPath: m_CastShadows
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 989c317c71f1b8b49bcb18c727228a5b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 026dfb1f78aa6754091bec8d64399fe2, type: 2}
     - target: {fileID: 919132149155446097, guid: 989c317c71f1b8b49bcb18c727228a5b, type: 3}
       propertyPath: m_Name
       value: doorWall
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 989c317c71f1b8b49bcb18c727228a5b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 4423045620967985251, guid: 989c317c71f1b8b49bcb18c727228a5b, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 9077926073120308842, guid: 989c317c71f1b8b49bcb18c727228a5b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: df03424bccc76c44bab94f6d1ff9f83b, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
