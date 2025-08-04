@@ -39,7 +39,7 @@ public class PlayerBehavior : MonoBehaviour
     /// <summary>
     /// playerInventory is a reference to the player's inventory, which is used to manage collected items.
     /// </summary>
-    public List<string> playerInventory;
+    public List<Evidence> playerInventory;
     /// <summary>
     /// caseFile is a gameObject that represents the player's case file, which can be used to store information about the player's progress or collected items.
     /// </summary>
@@ -51,7 +51,7 @@ public class PlayerBehavior : MonoBehaviour
     private StarterAssetsInputs starterAssets; // Reference to the StarterAssetsInputs component for player input handling
     void Start()
     {
-        playerInventory = new List<string>();
+        playerInventory = new List<Evidence>();
         starterAssets = GetComponent<StarterAssetsInputs>(); // Get the StarterAssetsInputs component
         caseFile.SetActive(false); // Ensure the case file is initially hidden
     }
@@ -142,20 +142,23 @@ public class PlayerBehavior : MonoBehaviour
             }
         }
     }
-    public void modifyInventory(bool add, string item)
+    public void modifyInventory(bool add, string item, Texture2D itemImage)
     {
         // This method can be used to modify the player's inventory based on the add parameter
         if (add)
         {
             // Logic to add an item to the inventory
             Debug.Log("Item added to inventory.");
-            playerInventory.Add(item);
+            playerInventory.Add(new Evidence { evidenceName = item, evidenceImage = itemImage });
+            CaseFile caseFile = GameObject.FindWithTag("CaseFileUI").GetComponent<CaseFile>(); // Find the CaseFile component in the scene
+            caseFile.AddEvidence(new Evidence { evidenceName = item, evidenceImage = itemImage }); // Add the evidence to the case file
         }
         else
         {
             // Logic to remove an item from the inventory
             Debug.Log("Item removed from inventory.");
-            playerInventory.Remove(item);
+            playerInventory.Remove(playerInventory.FirstOrDefault(e => e.evidenceName == item));
+
         }
     }
     void OnPause()

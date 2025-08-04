@@ -66,7 +66,8 @@ public class CollectibleBehavior : MonoBehaviour
 
         //player.collectedSomething(this); // Call the player's method to modify the score
         AudioSource.PlayClipAtPoint(collectibleAudioClip, transform.position, 1f); // Play the collectible sound
-        player.modifyInventory(true, gameObject.name); // Add the collectible to the player's inventory
+        EvidenceCamera captureCamera= GameObject.FindWithTag("MainCamera").GetComponent<EvidenceCamera>(); // Find the EvidenceCamera in the scene
+        player.modifyInventory(true, gameObject.name, captureCamera.CaptureView()); // Add the collectible to the player's inventory
         Destroy(gameObject); // Destroy the coin object
     }
 }

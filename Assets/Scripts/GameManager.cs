@@ -177,7 +177,6 @@ public class GameManager : MonoBehaviour
     }
     public void openCaseFile()
     {
-        
         caseFileCanvas.enabled = true; // Show the case file canvas
     }
     public void closeCaseFile()
