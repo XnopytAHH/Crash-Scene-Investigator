@@ -40,6 +40,10 @@ public class GameManager : MonoBehaviour
     /// caseFileCanvas is a reference to the case file canvas.
     /// </summary>
     private Canvas caseFileCanvas;
+    /// <summary>
+    /// isPaused is a boolean that indicates whether the game is currently paused.
+    /// </summary>
+    public bool isPaused = false; // Flag to check if the game is paused
     void Awake()
     {
         OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single); // Initialize the pause menu when the scene is loaded
@@ -87,7 +91,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Game Started");
         currentLevel = 1; // Set the current level to 1 when the game starts
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Level 1"); // Load the first level
+        UnityEngine.SceneManagement.SceneManager.LoadScene("office"); // Load the first level
         Time.timeScale = 1; // Ensure the game is running at normal speed
         Cursor.lockState = CursorLockMode.Locked; // Lock the cursor to the game window
     }
@@ -150,6 +154,7 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None; // Unlock the cursor
         pauseMenu.enabled = true; // Enable the pause menu
         player.GetComponent<FirstPersonController>().enabled = false; // Disable the character controller to prevent movement
+        isPaused = true; // Set the paused state to true
 
     }
     public void resumeGame()
@@ -161,6 +166,7 @@ public class GameManager : MonoBehaviour
         {
             player.GetComponent<FirstPersonController>().enabled = true; // Enable the character controller
         }
+        isPaused = false; // Set the paused state to false
     }
     public void returnToMainMenu()
     {

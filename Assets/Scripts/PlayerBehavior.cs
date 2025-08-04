@@ -160,7 +160,15 @@ public class PlayerBehavior : MonoBehaviour
     }
     void OnPause()
     {
-        GameManager.Instance.pauseGame();
+        if (GameManager.Instance.isPaused)
+        {
+            GameManager.Instance.resumeGame(); // Resume the game if it is paused
+        }
+        else
+        {
+
+            GameManager.Instance.pauseGame(); // Pause the game if it is not paused
+        }
     }
     void OnOpenInventory()
     {
