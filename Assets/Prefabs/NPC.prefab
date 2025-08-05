@@ -244,7 +244,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b1e62cf95054c044a89b740cfd17c93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerUICanvas: {fileID: 0}
   textboxPrefab: {fileID: 8586549653406910690, guid: af76e5273ec746247aee75372127d93b, type: 3}
   endPoint: {fileID: 0}
   backgroundNPCLines: []
@@ -270,7 +269,7 @@ NavMeshAgent:
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 1
-  m_WalkableMask: 7
+  m_WalkableMask: 23
   m_ObstacleAvoidanceType: 4
 --- !u!54 &71873614413578486
 Rigidbody:
