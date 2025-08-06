@@ -6,8 +6,6 @@ public class startingCutscene : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private GameObject myCar;
     [SerializeField]
-    private GameObject fadeBackground;
-    [SerializeField]
     private GameObject companyLogo;
     [SerializeField]
     private float fadeDuration = 1f;
@@ -19,10 +17,6 @@ public class startingCutscene : MonoBehaviour
 
     void Start()
     {
-        backgroundAnimator = fadeBackground.GetComponent<Animator>();
-        menuAnimator = GameObject.FindWithTag("UI Menu").GetComponent<Animator>();
-        companyLogo.GetComponent<Image>().CrossFadeAlpha(0.0f, 0f, false);
-        menuAnimator.SetBool("MenuIn", false); // Ensure the menu is not visible at the start
         StartCoroutine(StartIntro());
     }
 
@@ -42,7 +36,16 @@ public class startingCutscene : MonoBehaviour
     }
     private IEnumerator StartIntro()
     {
+        Cursor.lockState = CursorLockMode.Locked; // Unlock the cursor at the start
+        backgroundAnimator = GameObject.FindWithTag("BackgroundUI").GetComponent<Animator>();
+        backgroundAnimator.SetBool("isOpen", false); // Ensure the background is closed at the start
+        backgroundAnimator.Play("Closed", 0, 0f); // Play the fade-in animation immediately
+        Debug.Log("Background Animator found: " + backgroundAnimator);
+        menuAnimator = GameObject.FindWithTag("UI Menu").GetComponent<Animator>();
+        companyLogo.GetComponent<Image>().CrossFadeAlpha(0.0f, 0f, false);
+        menuAnimator.SetBool("MenuIn", false); // Ensure the menu is not visible at the start
         yield return StartCoroutine(ShowCompanyLogo());
+        
         backgroundAnimator.SetBool("isOpen", true);
         Debug.Log("Fade in animation started");
         yield return new WaitForSeconds(3f);
@@ -65,6 +68,7 @@ public class startingCutscene : MonoBehaviour
         myCar.GetComponent<Rigidbody>().linearVelocity = Vector3.zero; // Stop the car
         menuAnimator.SetBool("MenuIn", true); // Trigger the menu animation
         Debug.Log("Car has reached the destination, game paused and menu triggered.");
+        Cursor.lockState = CursorLockMode.None; // Store the previous cursor lock state
 
     }
 }

@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.Cinemachine;
 using UnityEngine.SceneManagement;
+using UnityEngine.VFX;
 
 public class GameManager : MonoBehaviour
 {
@@ -43,15 +44,55 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// isPaused is a boolean that indicates whether the game is currently paused.
     /// </summary>
-    public bool isPaused = false; // Flag to check if the game is paused
+    public bool isPaused = false;
+    /// <summary>
+    /// backgroundAnimator is a reference to the background animator.
+    /// </summary>
+    private Animator backgroundAnimator;
+    /// <summary>
+    /// backgroundUI is a reference to the background UI GameObject.
+    /// </summary>
+    [SerializeField]
+    private GameObject backgroundUI;
+    /// <summary>
+    /// DayCounter is a textmeshproUGUI that displays the current day in the game.
+    /// </summary>
+
+    private TextMeshProUGUI dayCounter;
+    /// <summary>
+    /// startingNewDay is a boolean that indicates whether the game is starting a new day.
+    /// </summary>
+    public bool startingNewDay = false;
+    /// <summary>
+    /// bigBossAnimator is a reference to the animator for the big boss NPC.
+    /// </summary>
+    private Animator bigBossAnimator;
+    /// <summary>
+    /// deathSpawnParticles is a reference to the visual effect for the death spawn particles.
+    /// </summary>
+    private VisualEffect deathSpawnParticles;
+    /// <summary>
+    /// bigBoss is a reference to the big boss NPC behavior script.
+    /// </summary>
+    private NPCBehavior bigBoss;
+    void Start()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to the scene loaded event
+    }
     void Awake()
     {
+        
+        backgroundUI = GameObject.FindWithTag("BackgroundUI");
+        dayCounter = GameObject.Find("DayCounter").GetComponent<TextMeshProUGUI>();
+        dayCounter.enabled = false; // Disable the day counter at the start
+        backgroundAnimator = backgroundUI.GetComponent<Animator>();
         OnSceneLoaded(SceneManager.GetActiveScene(), LoadSceneMode.Single); // Initialize the pause menu when the scene is loaded
         Canvas dialogueUI = GameObject.FindWithTag("UI Dialogue").GetComponent<Canvas>();
         caseFileCanvas = GameObject.FindWithTag("CaseFileUI").GetComponent<Canvas>();
         caseFileCanvas.enabled = false; // Hide the case file canvas at the start
         audioSource = gameObject.GetComponent<AudioSource>();
         dialogueUI.enabled = false;
+
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -65,16 +106,37 @@ public class GameManager : MonoBehaviour
     }
     void Update()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to the scene loaded event
+        
 
-        if (SceneManager.GetActiveScene().name != "MainMenu")
-        {
-            mainMenu.enabled = false; // Disable the main menu if the game has started
-        }
-        else
+        if (SceneManager.GetActiveScene().name == "MainMenu")
         {
             mainMenu.enabled = true; // Enable the main menu if the game has not started
         }
+        else
+        {
+            mainMenu.enabled = false; // Disable the main menu if the game has started
+        }
+        if (player != null)
+        {
+            if (player.GetComponent<PlayerBehavior>().isBusy)
+            {
+                Cursor.lockState = CursorLockMode.None; // Unlock the cursor if the player is busy
+                player.GetComponent<FirstPersonController>().enabled = false; // Disable the character controller to prevent movement
+            }
+            else if (isPaused)
+            {
+                Cursor.lockState = CursorLockMode.None; // Unlock the cursor if the game is paused
+                player.GetComponent<FirstPersonController>().enabled = false; // Disable the character controller to prevent movement
+            }
+            else if (!player.GetComponent<PlayerBehavior>().isBusy)
+            {
+                Cursor.lockState = CursorLockMode.Locked; // Lock the cursor if the player is not busy
+                player.GetComponent<FirstPersonController>().enabled = true; // Enable the character controller
+            }
+
+        }
+
+
     }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
@@ -86,14 +148,45 @@ public class GameManager : MonoBehaviour
         {
             toggle.isOn = false; // Set all toggles to false
         }
+        if (SceneManager.GetActiveScene().name == "office")
+        {
+            deathSpawnParticles = GameObject.FindWithTag("NPC").GetComponentInChildren<VisualEffect>(false);
+            deathSpawnParticles.Stop(); // Stop the death spawn particles if they are playing
+            backgroundAnimator.Play("Closed", 0, 0f); // Play the fade-in animation immediately
+            backgroundAnimator.SetBool("isOpen", false); // Ensure the background is closed at the start
+            if (startingNewDay)
+            {
+                StartCoroutine(StartDayCoroutine()); // Start the day if a new day is starting
+                Debug.Log("Starting a new day, background animator is set to closed");
+            }
+            else
+            {
+                Debug.Log("Not starting a new day, background animator is set to open");
+                backgroundAnimator.SetBool("isOpen", true); // Ensure the background is open when in the office scene
+            }
+        }
     }
     public void StartGame()
     {
+        
         Debug.Log("Game Started");
+        startingNewDay = true; // Set the flag to indicate a new day is starting
+        Cursor.lockState = CursorLockMode.Locked; // Lock the cursor at the start
+        Debug.Log("Starting new day: " + currentLevel);
+        StartCoroutine(StartGameCoroutine());
+    }
+    IEnumerator StartGameCoroutine()
+    {
+        Debug.Log("Game Started 1");
+        Time.timeScale = 1; // Ensure the game is running at normal speed
+        backgroundAnimator.SetBool("isOpen", false); // Close the background UI
+        yield return new WaitForSeconds(2f); // Wait for 2 seconds before starting the game
+        Debug.Log("Game Started 1");
         currentLevel = 1; // Set the current level to 1 when the game starts
         UnityEngine.SceneManagement.SceneManager.LoadScene("office"); // Load the first level
-        Time.timeScale = 1; // Ensure the game is running at normal speed
+
         Cursor.lockState = CursorLockMode.Locked; // Lock the cursor to the game window
+        yield return null; // Wait for the end of the frame to ensure everything is set up correctly
     }
     public void ExitGame()
     {
@@ -162,18 +255,16 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked; // Lock the cursor again
         pauseMenu.enabled = false; // Disable the pause menu
         Time.timeScale = 1; // Resume the game
-        if (!player.GetComponent<PlayerBehavior>().isBusy)
-        {
-            player.GetComponent<FirstPersonController>().enabled = true; // Enable the character controller
-        }
+        
         isPaused = false; // Set the paused state to false
     }
     public void returnToMainMenu()
     {
-        Time.timeScale = 1; // Ensure the game is running at normal speed
+
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu"); // Load the main menu scene
         currentLevel = 0; // Reset the current level
-        Cursor.lockState = CursorLockMode.None; // Unlock the cursor
+        resumeGame(); // Resume the game to ensure the pause menu is closed
+        
     }
     public void openCaseFile()
     {
@@ -182,5 +273,48 @@ public class GameManager : MonoBehaviour
     public void closeCaseFile()
     {
         caseFileCanvas.enabled = false; // Hide the case file canvas
+    }
+    private IEnumerator StartDayCoroutine()
+    {
+        // UI for new day
+        backgroundAnimator.Play("Closed", 0, 0f); // Play the fade-in animation immediately
+        backgroundAnimator.SetBool("isOpen", false); // Ensure the background is closed at the start
+        dayCounter.enabled = true; // Enable the day counter
+        dayCounter.text = "Day " + currentLevel; // Update the day counter text
+        bigBoss = GameObject.FindWithTag("NPC").GetComponent<NPCBehavior>(); // Find the big boss NPC
+        bigBossAnimator = GameObject.FindWithTag("NPC").GetComponent<Animator>();
+        bigBossAnimator.Play("BossStandby", 0, 0f); // Play the standby animation for the big boss NPC
+        player.GetComponent<PlayerBehavior>().isBusy = true; // Set the player as busy while starting the day
+        dayCounter.CrossFadeAlpha(0.0f, 0f, true); // Fade in the day counter
+        
+        dayCounter.CrossFadeAlpha(1.0f, 1f, true); // Fade in the day counter
+        yield return new WaitForSeconds(2f); // Wait for 2 seconds before fading out
+        dayCounter.CrossFadeAlpha(0.0f, 1f, true); // Fade out the day counter
+        yield return new WaitForSeconds(2f); // Wait for the fade out to complete
+        dayCounter.enabled = false; // Disable the day counter after fading out
+
+        backgroundAnimator.SetBool("isOpen", true);
+
+        yield return new WaitForSeconds(1f); // Wait for the end of the frame to ensure everything is set up correctly
+
+
+
+        //Death spawn in and dialogue
+        deathSpawnParticles.Play(); // Play the death spawn particles effect
+
+        yield return new WaitForSeconds(2f); // Wait for 2 seconds before starting the dialogue
+
+        bigBossAnimator.Play("BossSpawn", 0, 0f); // Play the spawn in animation for the big boss NPC
+        yield return new WaitForSeconds(3f); // Wait for 3 seconds to allow the animation to play
+        deathSpawnParticles.Stop(); // Stop the death spawn particles effect
+
+        yield return null; // Wait for the end of the frame to ensure everything is set up correctly
+        // Start the dialogue with the big boss NPC
+        Dialogue currentDialogueLines = bigBoss.getNPCLines(0); // Get the dialogue lines for the big boss NPC
+
+        Debug.Log("Starting dialogue with big boss: " + bigBoss.gameObject.name);
+        StartCoroutine(NPCDialogue(bigBoss.gameObject, currentDialogueLines)); // Start the dialogue coroutine with the big boss NPC
+        yield return null; // Wait for the end of the frame to ensure everything is set up correctly
+        startingNewDay = false; // Reset the flag after starting the day
     }
 }

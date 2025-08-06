@@ -126,7 +126,7 @@ public class PlayerBehavior : MonoBehaviour
                     {
                         // If the NPC is an interactive NPC, start dialogue
                         Debug.Log("Interacting with NPC: " + currentNPC.name);
-                        Dialogue currentDialogueLines = currentNPC.GetComponent<NPCBehavior>().getNPCLines();
+                        Dialogue currentDialogueLines = currentNPC.GetComponent<NPCBehavior>().getNPCLines(GameManager.Instance.currentLevel); // Get the dialogue lines for the current NPC
                         isBusy = true; // Set the player as busy to prevent further interactions
                         StartCoroutine(GameManager.Instance.NPCDialogue(currentNPC, currentDialogueLines));
                     }

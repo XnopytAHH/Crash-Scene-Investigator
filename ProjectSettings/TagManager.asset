@@ -13,6 +13,7 @@ TagManager:
   - TrafficLight
   - BackgroundNPC
   - CaseFileUI
+  - BackgroundUI
   layers:
   - Default
   - TransparentFX
