@@ -173,7 +173,7 @@ public class PlayerBehavior : MonoBehaviour
             GameManager.Instance.pauseGame(); // Pause the game if it is not paused
         }
     }
-    void OnOpenInventory()
+    public void OnOpenInventory()
     {
         caseFile.SetActive(!caseFile.activeSelf); // Toggle the visibility of the case file
         if (caseFile.activeSelf)

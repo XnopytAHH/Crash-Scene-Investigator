@@ -7,6 +7,10 @@ using TMPro;
 using Unity.Cinemachine;
 using UnityEngine.SceneManagement;
 using UnityEngine.VFX;
+using UnityEngine.Rendering.Universal;
+using Unity.Mathematics;
+using UnityEngine.Rendering;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -62,7 +66,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// startingNewDay is a boolean that indicates whether the game is starting a new day.
     /// </summary>
-    public bool startingNewDay = false;
+    private bool startingNewDay = false;
     /// <summary>
     /// bigBossAnimator is a reference to the animator for the big boss NPC.
     /// </summary>
@@ -75,13 +79,69 @@ public class GameManager : MonoBehaviour
     /// bigBoss is a reference to the big boss NPC behavior script.
     /// </summary>
     private NPCBehavior bigBoss;
+    /// <summary>
+    /// levelManager is a reference to the LevelManager script that manages the levels in the game.
+    /// </summary>
+    [SerializeField]
+    LevelManager levelManager;
+    /// <summary>
+    /// caseFile is a reference to the CaseFile script that manages the case file in the game.
+    /// </summary>
+    [SerializeField]
+    CaseFile caseFile;
+    /// <summary>
+    /// timerUI is a reference to the timer UI that displays the time left in the level
+    /// </summary>
+    [SerializeField]
+    private TextMeshProUGUI timerUI;
+    /// <summary>
+    /// levelTimer is a float that holds the time left in the level.
+    /// </summary>
+    private float levelTimer = 180f;
+    /// <summary>
+    /// warningIndicator is a reference to the warning indicator UI that shows when the level is about to end.
+    /// </summary>
+    [SerializeField]
+    Volume warningIndicator;
+    /// <summary>
+    /// volumeProfile is a reference to the volume profile for the warning indicator.
+    /// </summary>
+    [SerializeField]
+    VolumeProfile volumeProfile;
+    /// <summary>
+    /// vignetteEffect is a reference to the vignette effect in the volume profile.
+    /// </summary>
+    private Vignette vignetteEffect;
+    /// <summary>
+    /// lensDistortionEffect is a reference to the lens distortion effect in the volume profile.
+    /// </summary>
+    private LensDistortion lensDistortionEffect;
+    /// <summary>
+    /// indicatorGreen is the color for the warning indicator when there is sufficient time left.
+    /// </summary>
+    [SerializeField]
+    Color indicatorGreen;
+    /// <summary>
+    /// indicatorYellow is the color for the warning indicator when time is running low.
+    /// </summary>
+    [SerializeField]
+    Color indicatorYellow;
+    /// <summary>
+    /// indicatorRed is the color for the warning indicator when time is critical.
+    /// </summary>
+    [SerializeField]
+    Color indicatorRed;
+    /// <summary>
+    /// beenToLevel is a boolean that indicates whether the player has been to the level before.
+    /// </summary>
+    public bool beenToLevel = false;
     void Start()
     {
         SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to the scene loaded event
     }
     void Awake()
     {
-        
+
         backgroundUI = GameObject.FindWithTag("BackgroundUI");
         dayCounter = GameObject.Find("DayCounter").GetComponent<TextMeshProUGUI>();
         dayCounter.enabled = false; // Disable the day counter at the start
@@ -106,7 +166,7 @@ public class GameManager : MonoBehaviour
     }
     void Update()
     {
-        
+
 
         if (SceneManager.GetActiveScene().name == "MainMenu")
         {
@@ -140,6 +200,7 @@ public class GameManager : MonoBehaviour
     }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        timerUI.enabled = false; // Disable the timer UI at the start
         pauseMenu.enabled = false; // Disable the pause menu at the start
         player = GameObject.FindWithTag("Player");
         //loop through all toggles and set them to false
@@ -150,25 +211,82 @@ public class GameManager : MonoBehaviour
         }
         if (SceneManager.GetActiveScene().name == "office")
         {
+            if (volumeProfile.TryGet(out Vignette vignetteEffect) && volumeProfile.TryGet(out LensDistortion lensDistortionEffect))
+            {
+                vignetteEffect.color.value = indicatorGreen; // Set the initial vignette color to green
+                vignetteEffect.intensity.value = 0f; // Set the vignette intensity to a default value
+                lensDistortionEffect.intensity.value = 0f; // Set the lens distortion intensity to a default value
+            }
             deathSpawnParticles = GameObject.FindWithTag("NPC").GetComponentInChildren<VisualEffect>(false);
             deathSpawnParticles.Stop(); // Stop the death spawn particles if they are playing
-            backgroundAnimator.Play("Closed", 0, 0f); // Play the fade-in animation immediately
-            backgroundAnimator.SetBool("isOpen", false); // Ensure the background is closed at the start
+            
             if (startingNewDay)
             {
+                backgroundAnimator.Play("Closed", 0, 0f); // Play the fade-in animation immediately
+                backgroundAnimator.SetBool("isOpen", false); // Ensure the background is closed at the start
                 StartCoroutine(StartDayCoroutine()); // Start the day if a new day is starting
                 Debug.Log("Starting a new day, background animator is set to closed");
             }
             else
             {
+                backgroundAnimator.Play("open", 0, 0f); // Play the fade-in animation immediately
                 Debug.Log("Not starting a new day, background animator is set to open");
-                backgroundAnimator.SetBool("isOpen", true); // Ensure the background is open when in the office scene
+                StartCoroutine(transitionToNewScene()); // Transition to the new scene if not starting a new day
+                        
             }
+        }
+        else if (SceneManager.GetActiveScene().name == "MainMenu")
+        {
+
+        }
+        else
+        {
+            warningIndicator = GameObject.Find("Global Volume").GetComponent<Volume>();
+            volumeProfile = warningIndicator.sharedProfile; // Get the volume profile from the global volume
+            if (volumeProfile.TryGet(out Vignette vignetteEffect) && volumeProfile.TryGet(out LensDistortion lensDistortionEffect))
+            {
+                vignetteEffect.color.value = indicatorGreen; // Set the initial vignette color to green
+                vignetteEffect.intensity.value = 0.309f; // Set the vignette intensity to a default value
+                lensDistortionEffect.intensity.value = 0f; // Set the lens distortion intensity to a default value
+            }
+            else
+            {
+                Debug.LogError("Vignette or Lens Distortion effect not found in volume profile!"); // Log an error if the effects are not found
+            }
+            backgroundAnimator.SetBool("isOpen", true); // Ensure the background is open in other scenes
+            StartCoroutine(StartLevel()); // Start the level coroutine if not in the office scene
+        }
+        {
+
+        }
+
+    }
+    IEnumerator transitionToNewScene()
+    {
+        if (volumeProfile.TryGet(out Vignette vignetteEffect))
+        {
+            vignetteEffect.color.value = Color.black; // Set the initial vignette color to green
+            vignetteEffect.intensity.value = 1f; // Set the vignette intensity to a default value
+
+        }
+        if (volumeProfile.TryGet(out LensDistortion lensDistortionEffect))
+        {
+
+            lensDistortionEffect.intensity.value = 0f; // Set the lens distortion intensity to a default value
+        }
+        while (vignetteEffect.intensity.value > 0.0f) // Gradually increase the vignette intensity
+        {
+            vignetteEffect.intensity.value -= 0.01f; // Gradually increase the vignette intensity
+            if (lensDistortionEffect.intensity.value != 0f)
+            {
+                lensDistortionEffect.intensity.value += 0.01f; // Gradually increase the lens distortion intensity
+            }
+            yield return new WaitForSeconds(0.01f); // Wait for a short duration to create a smooth transition
         }
     }
     public void StartGame()
     {
-        
+
         Debug.Log("Game Started");
         startingNewDay = true; // Set the flag to indicate a new day is starting
         Cursor.lockState = CursorLockMode.Locked; // Lock the cursor at the start
@@ -232,7 +350,7 @@ public class GameManager : MonoBehaviour
             }
             if (letter != ' ') // If the letter is a space, skip the delay
             {
-                audioSource.pitch = Random.Range(0.97f, 1.03f); // Randomize the pitch for variation
+                audioSource.pitch = UnityEngine.Random.Range(0.97f, 1.03f); // Randomize the pitch for variation
                 audioSource.PlayOneShot(line.AudioClip); // Play the audio clip for the letter
             }
 
@@ -255,7 +373,7 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked; // Lock the cursor again
         pauseMenu.enabled = false; // Disable the pause menu
         Time.timeScale = 1; // Resume the game
-        
+
         isPaused = false; // Set the paused state to false
     }
     public void returnToMainMenu()
@@ -264,15 +382,17 @@ public class GameManager : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu"); // Load the main menu scene
         currentLevel = 0; // Reset the current level
         resumeGame(); // Resume the game to ensure the pause menu is closed
-        
+
     }
     public void openCaseFile()
     {
         caseFileCanvas.enabled = true; // Show the case file canvas
+        isPaused = true; // Set the paused state to true when the case file is open
     }
     public void closeCaseFile()
     {
         caseFileCanvas.enabled = false; // Hide the case file canvas
+        isPaused = false; // Set the paused state to true when the case file is open
     }
     private IEnumerator StartDayCoroutine()
     {
@@ -286,7 +406,7 @@ public class GameManager : MonoBehaviour
         bigBossAnimator.Play("BossStandby", 0, 0f); // Play the standby animation for the big boss NPC
         player.GetComponent<PlayerBehavior>().isBusy = true; // Set the player as busy while starting the day
         dayCounter.CrossFadeAlpha(0.0f, 0f, true); // Fade in the day counter
-        
+
         dayCounter.CrossFadeAlpha(1.0f, 1f, true); // Fade in the day counter
         yield return new WaitForSeconds(2f); // Wait for 2 seconds before fading out
         dayCounter.CrossFadeAlpha(0.0f, 1f, true); // Fade out the day counter
@@ -296,7 +416,7 @@ public class GameManager : MonoBehaviour
         backgroundAnimator.SetBool("isOpen", true);
 
         yield return new WaitForSeconds(1f); // Wait for the end of the frame to ensure everything is set up correctly
-
+        beenToLevel = false; // Reset the flag indicating whether the player has been to the level before
 
 
         //Death spawn in and dialogue
@@ -316,5 +436,120 @@ public class GameManager : MonoBehaviour
         StartCoroutine(NPCDialogue(bigBoss.gameObject, currentDialogueLines)); // Start the dialogue coroutine with the big boss NPC
         yield return null; // Wait for the end of the frame to ensure everything is set up correctly
         startingNewDay = false; // Reset the flag after starting the day
+
+        caseFile.UpdateDetails("Case File - " + levelManager.levelName[currentLevel], levelManager.levelDate[currentLevel]); // Update the case file details with the current day and date
+    }
+    public void changeLevel()
+    {
+        SceneManager.LoadScene("Level " + currentLevel); // Load the next level scene based on the current level
+        isPaused = false; // Set the paused state to false when changing levels
+        beenToLevel = true; // Set the flag indicating that the player has been to the level before
+    }
+    private IEnumerator StartLevel()
+    {
+        yield return new WaitForSeconds(1f); // Wait for 1 second before starting the level
+        Cursor.lockState = CursorLockMode.Locked; // Lock the cursor to the game window
+        player = GameObject.FindWithTag("Player"); // Find the player GameObject
+        player.GetComponent<FirstPersonController>().enabled = false; // Disable the character controller to
+
+        yield return LevelCutscene(); // Start the level cutscene
+        player.GetComponent<FirstPersonController>().enabled = true; // Enable the character controller after the cutscene
+        player.GetComponent<PlayerBehavior>().isBusy = false; // Set the player as not busy after the cutscene
+        StartCoroutine(LevelTimer()); // Start the level timer coroutine
+
+    }
+    private IEnumerator LevelCutscene()
+    {
+        // Implement the level cutscene logic here
+        // For example, you can play an animation or show a cinematic
+        yield return new WaitForSeconds(2f); // Wait for 2 seconds before continuing
+        Debug.Log("Level cutscene started");
+        yield return null; // Wait for the end of the frame to ensure everything is set up correctly
+    }
+    private IEnumerator LevelTimer()
+    {
+        warningIndicator = GameObject.Find("Global Volume").GetComponent<Volume>();
+        volumeProfile = warningIndicator.sharedProfile; // Get the volume profile from the global volume
+        timerUI.enabled = true; // Enable the timer UI
+        float timer = levelTimer; // Set the timer to the level time
+        if (volumeProfile.TryGet(out Vignette vignetteEffect))
+        {
+
+            vignetteEffect.color.value = indicatorGreen; // Set the initial vignette color to green
+            vignetteEffect.intensity.value = 0.309f; // Set the vignette intensity to a default value
+        }
+        else
+        {
+            Debug.LogError("Vignette effect not found in volume profile!"); // Log an error if the vignette effect is not found
+        }
+        while (timer > 0)
+        {
+            timer -= Time.deltaTime; // Decrease the timer by the time since the last frame
+            if (Mathf.Floor(timer % 60) < 10)
+            {
+                timerUI.text = "Time Left: " + Mathf.Floor(timer / 60) + ":0" + Mathf.Floor(timer % 60); // Update the timer UI text
+            }
+            else
+            {
+                timerUI.text = "Time Left: " + Mathf.Floor(timer / 60) + ":" + Mathf.Floor(timer % 60); // Update the timer UI text
+            }
+
+            if (Mathf.Ceil(timer) > 120)
+            {
+
+                vignetteEffect.color.value = indicatorGreen; // Set the vignette color to green when there is sufficient time left
+                vignetteEffect.intensity.value = 0.309f; // Set the vignette intensity to a default value
+            }
+            else if (timer >= 60)
+            {
+                vignetteEffect.color.value = indicatorYellow; // Set the vignette color to yellow when time is low
+                vignetteEffect.intensity.value = 0.349f; // Set the vignette intensity to a default value
+            }
+            else
+            {
+                vignetteEffect.color.value = indicatorRed; // Set the vignette color to red when time is critical
+                vignetteEffect.intensity.value = 0.4f; // Set the vignette intensity to a default value
+            }
+            yield return null; // Wait for the next frame
+        }
+        StartCoroutine(ExitSequence()); // Start the exit sequence when the timer ends
+        Debug.Log("Level timer ended");
+        // Logic to end the level or transition to the next level can be added here
+        yield return null; // Wait for the end of the frame to ensure everything is set up correctly
+    }
+    public IEnumerator ExitSequence()
+    {
+        timerUI.enabled = false; // Disable the timer UI
+        player.GetComponent<FirstPersonController>().enabled = false; // Disable the character controller to prevent movement
+        player.GetComponent<PlayerBehavior>().isBusy = true; // Set the player as busy during the exit sequence
+        if (volumeProfile.TryGet(out Vignette vignetteEffect))
+        {
+            vignetteEffect.color.value = Color.black; // Set the initial vignette color to green
+            vignetteEffect.intensity.value = 0f; // Set the vignette intensity to a default value
+
+        }
+        if (volumeProfile.TryGet(out LensDistortion lensDistortionEffect))
+        {
+
+            lensDistortionEffect.intensity.value = 0f; // Set the lens distortion intensity to a default value
+        }
+        while (vignetteEffect.intensity.value < 1.0f) // Gradually increase the vignette intensity
+        {
+            vignetteEffect.intensity.value += 0.01f; // Gradually increase the vignette intensity
+            lensDistortionEffect.intensity.value -= 0.01f; // Gradually increase the lens distortion intensity
+            yield return new WaitForSeconds(0.05f); // Wait for a short duration to create a smooth transition
+        }
+
+        Debug.Log("Exit sequence end going to office");
+        SceneManager.LoadScene("office"); // Load the office scene to reset the level
+        yield return new WaitForSeconds(1f); // Wait for 1 second before continuing
+        player.GetComponent<PlayerBehavior>().isBusy = false; // Set the player as not busy after the exit sequence
+    }
+    public void ExitLevel()
+    {
+        StopAllCoroutines(); // Stop all coroutines
+        player.GetComponent<PlayerBehavior>().OnOpenInventory(); // Close the case file if it is open
+        StartCoroutine(ExitSequence()); // Start the exit sequence when the player exits the level
+
     }
 }
