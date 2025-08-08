@@ -8,6 +8,7 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public String[] levelName = new String[]
     {
+        "",
         "Crash at Clementi Road",
         "Crash at Bukit Timah Road",
         "Crash at Orchard Road",
@@ -18,6 +19,7 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public String[] levelDate = new String[]
     {
+       "",
         "Date: 20XX/10/01, 08:02hrs",
         "Date: 20XX/10/02, 14:18hrs",
         "Date: 20XX/10/03, 09:32hrs",
@@ -25,6 +27,7 @@ public class LevelManager : MonoBehaviour
     };
     public int[] culpritList = new int[]
     {
+        0,
         1,
         2,
         2,
@@ -32,6 +35,7 @@ public class LevelManager : MonoBehaviour
     };
     public String[] causeList = new String[]
     {
+        "what",
         "Crossing unfocused",
         "Amber Light",
         "Red Light",
@@ -39,6 +43,7 @@ public class LevelManager : MonoBehaviour
     };
     public int[] clueNumber = new int[]
     {
+        0,
         3,
         4,
         3,

@@ -314,11 +314,9 @@ public class GameManager : MonoBehaviour
         { Debug.Log("Player object found: " + player.name); }
 
         //loop through all toggles and set them to false
-        Toggle[] toggles = GameObject.FindObjectsByType<Toggle>(FindObjectsSortMode.None);
-        foreach (Toggle toggle in toggles)
-        {
-            toggle.isOn = false; // Set all toggles to false
-        }
+        
+        
+        
         if (SceneManager.GetActiveScene().name == "office")
         {
             caseFileObject = FindObjectsByType<CollectibleBehavior>(FindObjectsInactive.Include, FindObjectsSortMode.None)[0].gameObject; // Find the case file collectible object in the office scene
@@ -362,6 +360,14 @@ public class GameManager : MonoBehaviour
         }
         else if (SceneManager.GetActiveScene().name == "MainMenu")
         {
+            
+        
+            Toggle[] toggles = GameObject.FindObjectsByType<Toggle>(FindObjectsSortMode.None);
+            foreach (Toggle toggle in toggles)
+            {
+            toggle.isOn = false; // Set all toggles to false
+            }
+        
             crosshair.enabled = false; // Disable the crosshair in the main menu
         }
         else
@@ -595,11 +601,12 @@ public class GameManager : MonoBehaviour
     private IEnumerator LevelCutscene()
     {
         inCutscene = true; // Set the cutscene state to true
+        
         GameObject.Find("AccidentElements").GetComponent<Animator>().Play("Level1Accident", 0, 0f); // Play the accident cutscene animation
         GameObject.Find("AccidentElements").GetComponent<Animator>().speed = 0;
         yield return new WaitForSecondsRealtime(3f); // Wait for 2 seconds in real time to allow the cutscene to start
         GameObject.Find("AccidentElements").GetComponent<Animator>().speed = 1;
-        Time.timeScale = 1; // Resume the game after the cutscene starts
+        Time.timeScale = 1f; // Resume the game after the cutscene starts
         while (inCutscene)
         {
             yield return new WaitForSeconds(0.1f); // Wait for a short duration to allow the cutscene to play
@@ -766,6 +773,7 @@ public class GameManager : MonoBehaviour
         int totalScore = 0;
         int cluesFound = GameObject.Find("EvidenceCanvas").transform.childCount; // Count the number of clues found
         float timeRemaining = MathF.Ceiling(timer);
+        Debug.Log(currentCause.name +"|"+ levelManager.causeList[currentLevel] + " | " + culpritDropdown.value + " | " + levelManager.culpritList[currentLevel]);
         if (currentCause.name == levelManager.causeList[currentLevel])
         {
             correctCause = true;
