@@ -121,21 +121,12 @@ public class GameManager : MonoBehaviour
     /// lensDistortionEffect is a reference to the lens distortion effect in the volume profile.
     /// </summary>
     private LensDistortion lensDistortionEffect;
+    
     /// <summary>
-    /// indicatorGreen is the color for the warning indicator when there is sufficient time left.
+    /// indicatorBlue is the color for the warning indicator when time is critical.
     /// </summary>
     [SerializeField]
-    Color indicatorGreen;
-    /// <summary>
-    /// indicatorYellow is the color for the warning indicator when time is running low.
-    /// </summary>
-    [SerializeField]
-    Color indicatorYellow;
-    /// <summary>
-    /// indicatorRed is the color for the warning indicator when time is critical.
-    /// </summary>
-    [SerializeField]
-    Color indicatorRed;
+    Color indicatorBlue;
     /// <summary>
     /// beenToLevel is a boolean that indicates whether the player has been to the level before.
     /// </summary>
@@ -231,6 +222,10 @@ public class GameManager : MonoBehaviour
     /// correctCulprit is a bool that indicates whether the selected culprit is correct.
     /// </summary>
     bool correctCulprit;
+    /// <summary>
+    /// pulsing is a bool that indicates whether the vignette effect is currently pulsing.
+    /// </summary>
+    bool pulsing=false;
 
     /// <summary>
     /// Start is called before the first frame update
@@ -329,7 +324,7 @@ public class GameManager : MonoBehaviour
 
             if (volumeProfile.TryGet(out Vignette vignetteEffect) && volumeProfile.TryGet(out LensDistortion lensDistortionEffect))
             {
-                vignetteEffect.color.value = indicatorGreen; // Set the initial vignette color to green
+                vignetteEffect.color.value = indicatorBlue; // Set the initial vignette color to green
                 vignetteEffect.intensity.value = 0f; // Set the vignette intensity to a default value
                 lensDistortionEffect.intensity.value = 0f; // Set the lens distortion intensity to a default value
             }
@@ -376,8 +371,8 @@ public class GameManager : MonoBehaviour
             volumeProfile = warningIndicator.sharedProfile; // Get the volume profile from the global volume
             if (volumeProfile.TryGet(out Vignette vignetteEffect) && volumeProfile.TryGet(out LensDistortion lensDistortionEffect))
             {
-                vignetteEffect.color.value = indicatorGreen; // Set the initial vignette color to green
-                vignetteEffect.intensity.value = 0.309f; // Set the vignette intensity to a default value
+                vignetteEffect.color.value = indicatorBlue; // Set the initial vignette color to green
+                vignetteEffect.intensity.value = 0f; // Set the vignette intensity to a default value
                 lensDistortionEffect.intensity.value = 0f; // Set the lens distortion intensity to a default value
             }
             else
@@ -587,12 +582,24 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator StartLevel()
     {
+        
         yield return new WaitForSeconds(1f); // Wait for 1 second before starting the level
         Cursor.lockState = CursorLockMode.Locked; // Lock the cursor to the game window
         player = GameObject.FindWithTag("Player"); // Find the player GameObject
-        player.GetComponent<FirstPersonController>().enabled = false; // Disable the character controller to
-
+        player.GetComponent<FirstPersonController>().enabled = false; 
+        player.GetComponent<PlayerBehavior>().isBusy = true; // Set the player as busy while starting the level
+        CinemachineCamera vcam = GameObject.Find("PlayerFollowCamera").GetComponent<Unity.Cinemachine.CinemachineCamera>();
+        CinemachineCamera cutscam = GameObject.FindWithTag("CutsceneCamera").GetComponent<Unity.Cinemachine.CinemachineCamera>();
+        vcam.Priority = 10;
+        cutscam.Priority = 20;
+        crosshair.enabled = false; // Disable the crosshair at the start of the level
+    
         yield return LevelCutscene(); // Start the level cutscene
+        
+        vcam.Priority = 20;
+        cutscam.Priority = 10;
+        yield return new WaitForSeconds(3f); // Wait for 1 second to allow the cutscene to play
+        crosshair.enabled = true; // Re-enable the crosshair after the cutscene
         player.GetComponent<FirstPersonController>().enabled = true; // Enable the character controller after the cutscene
         player.GetComponent<PlayerBehavior>().isBusy = false; // Set the player as not busy after the cutscene
         StartCoroutine(LevelTimer()); // Start the level timer coroutine
@@ -631,13 +638,14 @@ public class GameManager : MonoBehaviour
         if (volumeProfile.TryGet(out Vignette vignetteEffect))
         {
 
-            vignetteEffect.color.value = indicatorGreen; // Set the initial vignette color to green
-            vignetteEffect.intensity.value = 0.309f; // Set the vignette intensity to a default value
+            vignetteEffect.color.value = indicatorBlue; // Set the initial vignette color to green
+            vignetteEffect.intensity.value = 0.109f; // Set the vignette intensity to a default value
         }
         else
         {
             Debug.LogError("Vignette effect not found in volume profile!"); // Log an error if the vignette effect is not found
         }
+        pulsing = false; // Reset the pulsing flag to false at the start of the level timer
         while (timer > 0)
         {
             timer -= Time.deltaTime; // Decrease the timer by the time since the last frame
@@ -650,32 +658,54 @@ public class GameManager : MonoBehaviour
                 timerUI.text = "Time Left: " + Mathf.Floor(timer / 60) + ":" + Mathf.Floor(timer % 60); // Update the timer UI text
             }
 
-            if (Mathf.Ceil(timer) > 120)
+            if (timer < 60)
             {
-
-                vignetteEffect.color.value = indicatorGreen; // Set the vignette color to green when there is sufficient time left
-                vignetteEffect.intensity.value = 0.309f; // Set the vignette intensity to a default value
-            }
-            else if (timer >= 60)
-            {
-                vignetteEffect.color.value = indicatorYellow; // Set the vignette color to yellow when time is low
-                vignetteEffect.intensity.value = 0.349f; // Set the vignette intensity to a default value
-            }
-            else
-            {
-                vignetteEffect.color.value = indicatorRed; // Set the vignette color to red when time is critical
-                vignetteEffect.intensity.value = 0.4f; // Set the vignette intensity to a default value
+                vignetteEffect.color.value = indicatorBlue; // Set the vignette color to blue when time is critical
+                StartCoroutine(vignettePulse());
             }
             yield return null; // Wait for the next frame
         }
+        pulsing = false; // Reset the pulsing flag to false when the timer ends
         StartCoroutine(ExitSequence()); // Start the exit sequence when the timer ends
         Debug.Log("Level timer ended");
         // Logic to end the level or transition to the next level can be added here
         yield return null; // Wait for the end of the frame to ensure everything is set up correctly
     }
+    IEnumerator vignettePulse()
+    {
+        if (pulsing)
+        {
+            yield break; // Exit if already pulsing to prevent multiple coroutines running simultaneously
+        }
+        else
+        {
+            pulsing = true; // Set the pulsing flag to true to indicate that the vignette is pulsing
+        }
+        while (timer >= 0)
+        {
+            if (volumeProfile.TryGet(out Vignette vignetteEffect))
+            {
+                while (vignetteEffect.intensity.value < 0.4f) // Gradually increase the vignette intensity
+                {
+                    vignetteEffect.intensity.value += 0.01f; // Gradually increase the vignette intensity
+                    yield return new WaitForSeconds(0.02f); // Wait for a short duration to create a smooth transition
+                }
+                while (vignetteEffect.intensity.value > 0.1f) // Gradually decrease the vignette intensity
+                {
+                    vignetteEffect.intensity.value -= 0.01f; // Gradually decrease the vignette intensity
+                    yield return new WaitForSeconds(0.02f); // Wait for a short duration to create a smooth transition
+                }
+            }
+        }
+    }
     public IEnumerator ExitTransition()
     {
-        player.GetComponent<PlayerBehavior>().OnOpenInventory(); // Close the case file if it is open
+        if (player.GetComponent<PlayerBehavior>().caseFile.activeSelf)
+        {
+         player.GetComponent<PlayerBehavior>().OnOpenInventory(); // Close the case file if it is open
+        }
+        
+       
         player.GetComponent<FirstPersonController>().enabled = false; // Disable the character controller to prevent movement
         player.GetComponent<PlayerBehavior>().isBusy = true; // Set the player as busy during the exit sequence
         if (volumeProfile.TryGet(out Vignette vignetteEffect))
@@ -819,10 +849,11 @@ public class GameManager : MonoBehaviour
         else
         {
             culpritUI.text = "Culprit not identified.";
+            culpritScoreUI.text = 0 + " points";
         }
 
         cluesUI.text = "Clues collected: " + cluesFound + "/" + levelManager.clueNumber[currentLevel]; // Update the clues UI text
-        cluesScoreUI.text = cluesFound * 100 + " points"; // Update the clues score UI text
+        cluesScoreUI.text = "100 x " + cluesFound + " points"; // Update the clues score UI text
         totalScore += cluesFound * 100; // Add the score for the clues collected
         timerendUI.text = "Time remaining: " + timeRemaining + " seconds"; // Update the timer UI text
         timerendScoreUI.text = timeRemaining * 10 + " points"; // Update the timer score UI text

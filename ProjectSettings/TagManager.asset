@@ -15,6 +15,7 @@ TagManager:
   - CaseFileUI
   - BackgroundUI
   - Impact
+  - CutsceneCamera
   layers:
   - Default
   - TransparentFX

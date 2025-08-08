@@ -44,7 +44,7 @@ public class PlayerBehavior : MonoBehaviour
     /// caseFile is a gameObject that represents the player's case file, which can be used to store information about the player's progress or collected items.
     /// </summary>
     [SerializeField]
-    GameObject caseFile; 
+    public GameObject caseFile;
     /// <summary>
     /// starterAssets is a reference to the StarterAssetsInputs component, which is used to handle player input.
     /// </summary>
@@ -131,16 +131,21 @@ public class PlayerBehavior : MonoBehaviour
                     else
                     {
                         if (currentNPC.name == "Big Boss")
-                        {if (GameManager.Instance.CheckCompletion())
+                        {
+                            if (GameManager.Instance.CheckCompletion())
                             {
-                            GameManager.Instance.EndDay();
+                                GameManager.Instance.EndDay();
+
+                            }
                         }
-                        }
-                        // If the NPC is an interactive NPC, start dialogue
+                        else
+                        {
+                            // If the NPC is an interactive NPC, start dialogue
                             Debug.Log("Interacting with NPC: " + currentNPC.name);
-                        Dialogue currentDialogueLines = currentNPC.GetComponent<NPCBehavior>().getNPCLines(GameManager.Instance.currentLevel); // Get the dialogue lines for the current NPC
-                        isBusy = true; // Set the player as busy to prevent further interactions
-                        StartCoroutine(GameManager.Instance.NPCDialogue(currentNPC, currentDialogueLines));
+                            Dialogue currentDialogueLines = currentNPC.GetComponent<NPCBehavior>().getNPCLines(GameManager.Instance.currentLevel); // Get the dialogue lines for the current NPC
+                            isBusy = true; // Set the player as busy to prevent further interactions
+                            StartCoroutine(GameManager.Instance.NPCDialogue(currentNPC, currentDialogueLines));
+                        }
                     }
                 }
                 else if (currentCollectible != null)
