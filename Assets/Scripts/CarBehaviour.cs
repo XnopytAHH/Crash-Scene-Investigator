@@ -14,6 +14,7 @@ public class CarBehaviour : MonoBehaviour
 
     bool waitingForLight = false;
     bool waitingForPlayer = false;
+    bool waitingForCar = false;
     bool isTalking = false;
 
     [SerializeField] float textOffset = 1.5f; // Offset for the
@@ -25,10 +26,11 @@ public class CarBehaviour : MonoBehaviour
     [SerializeField]
     AudioClip honkSound;
     AudioSource audioSource;
+    Transform startPos;
     void Awake()
     {
 
-
+        startPos = transform;
         carAgent = GetComponent<NavMeshAgent>();
         carAgent.speed = Random.Range(2f, 4f);
 
@@ -51,7 +53,7 @@ public class CarBehaviour : MonoBehaviour
             if (!isTalking && !waitingForLight &&
                 (transform.position.x != endPoint.position.x || transform.position.z != endPoint.position.z))
             {
-                if (!waitingForPlayer)
+                if (!waitingForPlayer && !waitingForCar && !waitingForLight)
                 {
                     StartCoroutine(SwitchState("Driving"));
                     yield break;
@@ -71,8 +73,9 @@ public class CarBehaviour : MonoBehaviour
     {
         while (currentState == "Driving")
         {
-            if (Vector3.Distance(transform.position, endPoint.position) < 0.5f)
+            if (carAgent.transform.position.x == endPoint.position.x && carAgent.transform.position.z == endPoint.position.z)
             {
+                carAgent.transform.position = startPos.position;
                 StartCoroutine(SwitchState("Idle"));
                 yield break;
             }
@@ -96,11 +99,29 @@ public class CarBehaviour : MonoBehaviour
     }
     void OnTriggerStay(Collider other)
     {
-        
+
         if (other.CompareTag("Player"))
         {
             waitingForPlayer = true;
             StartCoroutine(SwitchState("Idle"));
+        }
+        if (other.CompareTag("Car"))
+        {
+            waitingForCar = true;
+            StartCoroutine(SwitchState("Idle"));
+        }
+        if (other.CompareTag("TrafficLight"))
+        {
+            var light = other.GetComponent<TrafficLightBehaviour>();
+            if (light.color == "red")
+            {
+                waitingForLight = true;
+                StartCoroutine(SwitchState("Idle"));
+            }
+            if (light.color == "green")
+            {
+                waitingForLight = false;
+            }
         }
     }
     void OnTriggerExit(Collider other)

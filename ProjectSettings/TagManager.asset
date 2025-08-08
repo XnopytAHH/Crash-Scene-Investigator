@@ -16,6 +16,7 @@ TagManager:
   - BackgroundUI
   - Impact
   - CutsceneCamera
+  - Car
   layers:
   - Default
   - TransparentFX
