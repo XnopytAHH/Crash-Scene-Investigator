@@ -11,6 +11,7 @@ using UnityEngine.Rendering.Universal;
 using Unity.Mathematics;
 using UnityEngine.Rendering;
 using Unity.VisualScripting;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -36,7 +37,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// player is a reference to the player GameObject.
     /// </summary>
-    private GameObject player;
+    public GameObject player;
     /// <summary>
     /// currentAudio is an AudioClip that holds the audio for the current dialogue line.
     /// </summary>
@@ -90,6 +91,10 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     CaseFile caseFile;
     /// <summary>
+    /// caseFileObject is a reference to the GameObject that contains the case file UI.
+    /// </summary>
+    public GameObject caseFileObject;
+    /// <summary>
     /// timerUI is a reference to the timer UI that displays the time left in the level
     /// </summary>
     [SerializeField]
@@ -135,9 +140,104 @@ public class GameManager : MonoBehaviour
     /// beenToLevel is a boolean that indicates whether the player has been to the level before.
     /// </summary>
     public bool beenToLevel = false;
+
+    [SerializeField]
+    Material newMat;
+    /// <summary>
+    /// pingRunning is a boolean that indicates whether the ping effect is currently running.
+    /// </summary>
+    public bool pingRunning = false;
+    /// <summary>
+    /// crosshair is a reference to the crosshair UI element.
+    /// </summary>
+    [SerializeField]
+    Image crosshair;
+    /// <summary>
+    /// currentCause is a reference to the current Toggle that indicates the cause of accident
+    /// </summary>
+    Toggle currentCause;
+    [SerializeField]
+    TMP_Dropdown culpritDropdown;
+    private bool inCutscene = false; // Flag to indicate if the game is in a cutscene state
+    [SerializeField]
+    GameObject explosionPrefab;
+    float timer;
+
+    ///<summary>
+    /// endScreen is a reference to the canvas that displays the end screen UI.
+    /// </summary>
+    [SerializeField]
+    Canvas endScreen;
+    /// <summary>
+    /// correctText is a reference to the TextMeshProUGUI element that displays the correct answer text.
+    /// </summary>
+    [SerializeField]
+    TextMeshProUGUI correctText;
+    /// <summary>
+    /// caseNameUI is a reference to the TextMeshProUGUI element that displays the case name text.
+    /// </summary>
+    [SerializeField]
+    TextMeshProUGUI caseNameUI;
+    /// <summary>
+    /// culpritUI is a reference to the TextMeshProUGUI element that displays the culprit name text.
+    /// </summary>
+    [SerializeField]
+    TextMeshProUGUI culpritUI;
+    /// <summary>
+    /// culpritScoreUI is a reference to the TextMeshProUGUI element that displays the culprit score text.
+    /// </summary>
+    [SerializeField]
+    TextMeshProUGUI culpritScoreUI;
+    /// <summary>
+    /// causeUI is a reference to the TextMeshProUGUI element that displays the cause text.
+    /// </summary>
+    [SerializeField]
+    TextMeshProUGUI causeUI;
+    /// <summary>
+    /// causeScoreUI is a reference to the TextMeshProUGUI element that displays the cause score text.
+    /// </summary>
+    [SerializeField]
+    TextMeshProUGUI causeScoreUI;
+    /// <summary>
+    /// cluesUI is a reference to the TextMeshProUGUI element that displays the clues collected
+    /// </summary>
+    [SerializeField]
+    TextMeshProUGUI cluesUI;
+    /// <summary>
+    /// cluesScoreUI is a reference to the TextMeshProUGUI element that displays the clues score
+    /// </summary>
+    [SerializeField]
+    TextMeshProUGUI cluesScoreUI;
+    /// <summary>
+    /// timerendUI is a reference to the TextMeshProUGUI element that displays the timer
+    /// </summary>
+    [SerializeField]
+    TextMeshProUGUI timerendUI;
+    ///<summary>
+    /// timerendScoreUI is a reference to the TextMeshProUGUI element that displays the timer score
+    /// </summary>
+    [SerializeField]
+    TextMeshProUGUI timerendScoreUI;
+    /// <summary>
+    /// totalscoreUI is a reference to the TextMeshProUGUI element that displays the total score
+    /// </summary>
+    [SerializeField]
+    TextMeshProUGUI totalscoreUI;
+    /// <summary>
+    /// correctCause is a bool that indicates whether the selected cause is correct.
+    /// </summary>
+    bool correctCause;
+    /// <summary>
+    /// correctCulprit is a bool that indicates whether the selected culprit is correct.
+    /// </summary>
+    bool correctCulprit;
+
+    /// <summary>
+    /// Start is called before the first frame update
+    /// </summary>
     void Start()
     {
-        SceneManager.sceneLoaded += OnSceneLoaded; // Subscribe to the scene loaded event
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
     void Awake()
     {
@@ -200,9 +300,19 @@ public class GameManager : MonoBehaviour
     }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        endScreen.enabled = false; // Enable the end screen UI
+        crosshair.enabled = true; // Enable the crosshair in the office scene
         timerUI.enabled = false; // Disable the timer UI at the start
         pauseMenu.enabled = false; // Disable the pause menu at the start
         player = GameObject.FindWithTag("Player");
+        if (player == null)
+        {
+            Debug.LogError("Player object not found!"); // Log an error if the player object is not found
+
+        }
+        else
+        { Debug.Log("Player object found: " + player.name); }
+
         //loop through all toggles and set them to false
         Toggle[] toggles = GameObject.FindObjectsByType<Toggle>(FindObjectsSortMode.None);
         foreach (Toggle toggle in toggles)
@@ -211,6 +321,14 @@ public class GameManager : MonoBehaviour
         }
         if (SceneManager.GetActiveScene().name == "office")
         {
+            caseFileObject = FindObjectsByType<CollectibleBehavior>(FindObjectsInactive.Include, FindObjectsSortMode.None)[0].gameObject; // Find the case file collectible object in the office scene
+
+
+            if (caseFileObject != null)
+            {
+                caseFileObject.SetActive(false); // Hide the case file object when transitioning to a new scene
+            }
+
             if (volumeProfile.TryGet(out Vignette vignetteEffect) && volumeProfile.TryGet(out LensDistortion lensDistortionEffect))
             {
                 vignetteEffect.color.value = indicatorGreen; // Set the initial vignette color to green
@@ -219,7 +337,7 @@ public class GameManager : MonoBehaviour
             }
             deathSpawnParticles = GameObject.FindWithTag("NPC").GetComponentInChildren<VisualEffect>(false);
             deathSpawnParticles.Stop(); // Stop the death spawn particles if they are playing
-            
+
             if (startingNewDay)
             {
                 backgroundAnimator.Play("Closed", 0, 0f); // Play the fade-in animation immediately
@@ -229,15 +347,22 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                player.GetComponent<PlayerBehavior>().hasFile = true;
+                if (caseFileObject != null)
+                {
+
+                    caseFileObject.SetActive(false); // Hide the case file object when transitioning to a new scene
+                }
                 backgroundAnimator.Play("open", 0, 0f); // Play the fade-in animation immediately
+
                 Debug.Log("Not starting a new day, background animator is set to open");
                 StartCoroutine(transitionToNewScene()); // Transition to the new scene if not starting a new day
-                        
+
             }
         }
         else if (SceneManager.GetActiveScene().name == "MainMenu")
         {
-
+            crosshair.enabled = false; // Disable the crosshair in the main menu
         }
         else
         {
@@ -256,13 +381,12 @@ public class GameManager : MonoBehaviour
             backgroundAnimator.SetBool("isOpen", true); // Ensure the background is open in other scenes
             StartCoroutine(StartLevel()); // Start the level coroutine if not in the office scene
         }
-        {
 
-        }
 
     }
     IEnumerator transitionToNewScene()
     {
+
         if (volumeProfile.TryGet(out Vignette vignetteEffect))
         {
             vignetteEffect.color.value = Color.black; // Set the initial vignette color to green
@@ -388,23 +512,27 @@ public class GameManager : MonoBehaviour
     {
         caseFileCanvas.enabled = true; // Show the case file canvas
         isPaused = true; // Set the paused state to true when the case file is open
+        crosshair.enabled = false; // Disable the crosshair when the case file is open
     }
     public void closeCaseFile()
     {
         caseFileCanvas.enabled = false; // Hide the case file canvas
         isPaused = false; // Set the paused state to true when the case file is open
+        crosshair.enabled = true; // Enable the crosshair when the case file is closed
     }
     private IEnumerator StartDayCoroutine()
     {
         // UI for new day
         backgroundAnimator.Play("Closed", 0, 0f); // Play the fade-in animation immediately
         backgroundAnimator.SetBool("isOpen", false); // Ensure the background is closed at the start
+
         dayCounter.enabled = true; // Enable the day counter
         dayCounter.text = "Day " + currentLevel; // Update the day counter text
         bigBoss = GameObject.FindWithTag("NPC").GetComponent<NPCBehavior>(); // Find the big boss NPC
         bigBossAnimator = GameObject.FindWithTag("NPC").GetComponent<Animator>();
         bigBossAnimator.Play("BossStandby", 0, 0f); // Play the standby animation for the big boss NPC
         player.GetComponent<PlayerBehavior>().isBusy = true; // Set the player as busy while starting the day
+        player.GetComponent<PlayerBehavior>().hasFile = false; // Reset the case file flag
         dayCounter.CrossFadeAlpha(0.0f, 0f, true); // Fade in the day counter
 
         dayCounter.CrossFadeAlpha(1.0f, 1f, true); // Fade in the day counter
@@ -437,13 +565,19 @@ public class GameManager : MonoBehaviour
         yield return null; // Wait for the end of the frame to ensure everything is set up correctly
         startingNewDay = false; // Reset the flag after starting the day
 
-        caseFile.UpdateDetails("Case File - " + levelManager.levelName[currentLevel], levelManager.levelDate[currentLevel]); // Update the case file details with the current day and date
+        caseFile.UpdateDetails("Case File " + currentLevel + " - " + levelManager.levelName[currentLevel], levelManager.levelDate[currentLevel]); // Update the case file details with the current day and date
+        caseFileObject.SetActive(true); // Show the case file object after starting the day
     }
-    public void changeLevel()
+    public void initiateLevel()
     {
+        StartCoroutine(changeLevel());
+    }
+    IEnumerator changeLevel()
+    {
+        yield return ExitTransition(); // Start the exit transition
         SceneManager.LoadScene("Level " + currentLevel); // Load the next level scene based on the current level
         isPaused = false; // Set the paused state to false when changing levels
-        beenToLevel = true; // Set the flag indicating that the player has been to the level before
+        beenToLevel = true; // S
     }
     private IEnumerator StartLevel()
     {
@@ -460,18 +594,33 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator LevelCutscene()
     {
-        // Implement the level cutscene logic here
-        // For example, you can play an animation or show a cinematic
-        yield return new WaitForSeconds(2f); // Wait for 2 seconds before continuing
-        Debug.Log("Level cutscene started");
-        yield return null; // Wait for the end of the frame to ensure everything is set up correctly
+        inCutscene = true; // Set the cutscene state to true
+        GameObject.Find("AccidentElements").GetComponent<Animator>().Play("Level1Accident", 0, 0f); // Play the accident cutscene animation
+        GameObject.Find("AccidentElements").GetComponent<Animator>().speed = 0;
+        yield return new WaitForSecondsRealtime(3f); // Wait for 2 seconds in real time to allow the cutscene to start
+        GameObject.Find("AccidentElements").GetComponent<Animator>().speed = 1;
+        Time.timeScale = 1; // Resume the game after the cutscene starts
+        while (inCutscene)
+        {
+            yield return new WaitForSeconds(0.1f); // Wait for a short duration to allow the cutscene to play
+        }
+
+    }
+    public void EndCutscene()
+    {
+        inCutscene = false;
+    }
+    public void Impact()
+    {
+        Instantiate(explosionPrefab, GameObject.FindWithTag("Impact").transform.position, Quaternion.identity); // Instantiate the explosion effect at the impact point's position
     }
     private IEnumerator LevelTimer()
     {
+        timer = levelTimer; // Set the timer to the level time
         warningIndicator = GameObject.Find("Global Volume").GetComponent<Volume>();
         volumeProfile = warningIndicator.sharedProfile; // Get the volume profile from the global volume
         timerUI.enabled = true; // Enable the timer UI
-        float timer = levelTimer; // Set the timer to the level time
+
         if (volumeProfile.TryGet(out Vignette vignetteEffect))
         {
 
@@ -517,9 +666,9 @@ public class GameManager : MonoBehaviour
         // Logic to end the level or transition to the next level can be added here
         yield return null; // Wait for the end of the frame to ensure everything is set up correctly
     }
-    public IEnumerator ExitSequence()
+    public IEnumerator ExitTransition()
     {
-        timerUI.enabled = false; // Disable the timer UI
+        player.GetComponent<PlayerBehavior>().OnOpenInventory(); // Close the case file if it is open
         player.GetComponent<FirstPersonController>().enabled = false; // Disable the character controller to prevent movement
         player.GetComponent<PlayerBehavior>().isBusy = true; // Set the player as busy during the exit sequence
         if (volumeProfile.TryGet(out Vignette vignetteEffect))
@@ -539,7 +688,12 @@ public class GameManager : MonoBehaviour
             lensDistortionEffect.intensity.value -= 0.01f; // Gradually increase the lens distortion intensity
             yield return new WaitForSeconds(0.05f); // Wait for a short duration to create a smooth transition
         }
+    }
+    public IEnumerator ExitSequence()
+    {
+        timerUI.enabled = false; // Disable the timer UI
 
+        yield return ExitTransition(); // Start the exit transition
         Debug.Log("Exit sequence end going to office");
         SceneManager.LoadScene("office"); // Load the office scene to reset the level
         yield return new WaitForSeconds(1f); // Wait for 1 second before continuing
@@ -548,8 +702,131 @@ public class GameManager : MonoBehaviour
     public void ExitLevel()
     {
         StopAllCoroutines(); // Stop all coroutines
-        player.GetComponent<PlayerBehavior>().OnOpenInventory(); // Close the case file if it is open
+
         StartCoroutine(ExitSequence()); // Start the exit sequence when the player exits the level
 
+    }
+    public IEnumerator pingFile()
+    {
+        GameManager.Instance.pingRunning = true; // Set the ping effect as running
+
+        Outline caseFileOutline = caseFileObject.GetComponent<Outline>();
+        while (caseFileOutline.OutlineWidth < 10f) // Gradually increase the outline width
+        {
+            caseFileOutline.OutlineColor = Color.green; // Set the outline color to green
+            caseFileOutline.OutlineWidth += 0.3f; // Increase the outline width
+            yield return new WaitForSeconds(0.01f); // Wait for a short duration to create a smooth transition
+        }
+        while (caseFileOutline.OutlineWidth > 3f) // Gradually decrease the outline width
+        {
+
+            caseFileOutline.OutlineWidth -= 0.3f; // Decrease the outline width
+            yield return new WaitForSeconds(0.01f); // Wait for a short duration to create a smooth transition
+        }
+        caseFileOutline.OutlineColor = Color.yellow; // Set the outline color to red
+        Debug.Log("Case file pinged.");
+        GameManager.Instance.pingRunning = false; // Set the ping effect as not running
+    }
+    public void ChangeCause(Toggle toggle)
+    {
+        if (toggle != currentCause)
+        {
+            Debug.Log("Changing cause to: " + toggle.name);
+            if (currentCause != null)
+            {
+                currentCause.isOn = false; // Uncheck the previous cause toggle
+            }
+            currentCause = toggle; // Set the current cause to the newly selected toggle
+        }
+        else
+        {
+
+            currentCause.isOn = false; // Uncheck the current cause if it is already selected
+            currentCause = null; // Reset the current cause to null
+        }
+    }
+    public bool CheckCompletion()
+    {
+        
+        if (currentCause != null && culpritDropdown.value != 0)
+        {
+            Debug.Log("Cause selected: " + currentCause.name + ", Culprit selected: " + culpritDropdown.options[culpritDropdown.value].text);
+            return true;
+        }
+        else
+        {
+            Debug.Log("No cause or culprit selected.");
+            Debug.Log("Current cause: " + (currentCause != null ? currentCause.name : "None") + ", Culprit dropdown value: " + culpritDropdown.value);
+            return false; // Return false if no cause is selected
+        }
+    }
+    public void EndDay()
+    {
+        endScreen.enabled = true; // Enable the end screen UI
+        int totalScore = 0;
+        int cluesFound = GameObject.Find("EvidenceCanvas").transform.childCount; // Count the number of clues found
+        float timeRemaining = MathF.Ceiling(timer);
+        if (currentCause.name == levelManager.causeList[currentLevel])
+        {
+            correctCause = true;
+        }
+        else
+        {
+            correctCause = false; // Set the correct cause flag to false if the selected cause does not match the level's cause
+        }
+        if (culpritDropdown.value == levelManager.culpritList[currentLevel])
+        {
+            correctCulprit = true;
+        }
+        else
+        {
+            correctCulprit = false; // Set the correct culprit flag to false if the selected culprit does not match the level's culprit
+        }
+        caseNameUI.text = "Case File " + currentLevel + " - " + levelManager.levelName[currentLevel]; // Update the case name UI text
+        if (correctCulprit)
+        {
+            correctText.text = "Solved!";
+        }
+        else
+        {
+            correctText.text = "Unsolved";
+        }
+        if (correctCause)
+        {
+            causeUI.text = "Cause of accident identified:";
+            causeScoreUI.text = 1000 + " points";
+            totalScore += 1000; // Add the score for the cause of accident
+        }
+        else
+        {
+            causeUI.text = "Cause of accident incorrect.";
+            causeScoreUI.text = 0 + " points";
+        }
+        if (correctCulprit)
+        {
+            culpritUI.text = "Culprit identified:";
+            culpritScoreUI.text = 500 + " points";
+            totalScore += 500; // Add the score for the culprit
+        }
+        else
+        {
+            culpritUI.text = "Culprit not identified.";
+        }
+
+        cluesUI.text = "Clues collected: " + cluesFound + "/" + levelManager.clueNumber[currentLevel]; // Update the clues UI text
+        cluesScoreUI.text = cluesFound * 100 + " points"; // Update the clues score UI text
+        totalScore += cluesFound * 100; // Add the score for the clues collected
+        timerendUI.text = "Time remaining: " + timeRemaining + " seconds"; // Update the timer UI text
+        timerendScoreUI.text = timeRemaining * 10 + " points"; // Update the timer score UI text
+        totalScore += (int)(timeRemaining * 10); // Add the score for the time remaining
+
+        totalscoreUI.text = totalScore + " points"; // Update the total score UI text
+
+    }
+    public void NextLevel()
+    {
+        currentLevel++;
+        startingNewDay = true; // Set the flag to indicate a new day is starting
+        SceneManager.LoadScene("office");
     }
 }

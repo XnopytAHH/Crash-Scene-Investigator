@@ -44,11 +44,16 @@ public class PlayerBehavior : MonoBehaviour
     /// caseFile is a gameObject that represents the player's case file, which can be used to store information about the player's progress or collected items.
     /// </summary>
     [SerializeField]
-    GameObject caseFile; // Reference to the player's case file
+    GameObject caseFile; 
     /// <summary>
     /// starterAssets is a reference to the StarterAssetsInputs component, which is used to handle player input.
     /// </summary>
-    private StarterAssetsInputs starterAssets; // Reference to the StarterAssetsInputs component for player input handling
+    private StarterAssetsInputs starterAssets; 
+    /// <summary>
+    /// hasFile is a boolean flag that indicates whether the player has a case file.
+    /// </summary>
+    public bool hasFile = false; // Flag to check if the player has a case file
+    
     void Start()
     {
         playerInventory = new List<Evidence>();
@@ -81,6 +86,7 @@ public class PlayerBehavior : MonoBehaviour
                 currentCollectible.GetComponent<CollectibleBehavior>().Highlight(); // Highlight the collectible
                 canInteract = true; // Allow interaction with the collectible
             }
+            
             else
             {
                 if (currentCollectible != null)
@@ -124,8 +130,14 @@ public class PlayerBehavior : MonoBehaviour
                     }
                     else
                     {
+                        if (currentNPC.name == "Big Boss")
+                        {if (GameManager.Instance.CheckCompletion())
+                            {
+                            GameManager.Instance.EndDay();
+                        }
+                        }
                         // If the NPC is an interactive NPC, start dialogue
-                        Debug.Log("Interacting with NPC: " + currentNPC.name);
+                            Debug.Log("Interacting with NPC: " + currentNPC.name);
                         Dialogue currentDialogueLines = currentNPC.GetComponent<NPCBehavior>().getNPCLines(GameManager.Instance.currentLevel); // Get the dialogue lines for the current NPC
                         isBusy = true; // Set the player as busy to prevent further interactions
                         StartCoroutine(GameManager.Instance.NPCDialogue(currentNPC, currentDialogueLines));
@@ -133,10 +145,17 @@ public class PlayerBehavior : MonoBehaviour
                 }
                 else if (currentCollectible != null)
                 {
-                    Debug.Log("Collecting collectible: " + currentCollectible.name);
-                    // Collect the collectible and modify the player's score
-                    currentCollectible.GetComponent<CollectibleBehavior>().Collect(this);
-                    currentCollectible = null; // Reset currentCollectible after collection
+                    if (currentCollectible.name == "CaseFiles")
+                    {
+                        currentCollectible.SetActive(false); // Hide the case file collectible
+                        hasFile = true; // Set the flag indicating the player has a case file
+                    }
+                    else
+                    {
+                        currentCollectible.GetComponent<EvidenceBehaviour>().Collect(this);
+                        currentCollectible = null; // Reset currentCollectible after collection
+                    }
+                    
                 }
 
             }
@@ -175,19 +194,29 @@ public class PlayerBehavior : MonoBehaviour
     }
     public void OnOpenInventory()
     {
-        caseFile.SetActive(!caseFile.activeSelf); // Toggle the visibility of the case file
-        if (caseFile.activeSelf)
+        if (hasFile)
         {
-            Cursor.lockState = CursorLockMode.None; // Unlock the cursor when the case file is open
-            starterAssets.cursorInputForLook = false; // Disable mouse look input when the case file is open
-            GameManager.Instance.openCaseFile(); // Call the method to open the case file
+            caseFile.SetActive(!caseFile.activeSelf); // Toggle the visibility of the case file
+            if (caseFile.activeSelf)
+            {
+                Cursor.lockState = CursorLockMode.None; // Unlock the cursor when the case file is open
+                starterAssets.cursorInputForLook = false; // Disable mouse look input when the case file is open
+                GameManager.Instance.openCaseFile(); // Call the method to open the case file
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked; // Lock the cursor when the case file is closed
+                starterAssets.cursorInputForLook = true; // Re-enable mouse look input when the case file is closed
+                GameManager.Instance.closeCaseFile(); // Call the method to close the case file
+            }
         }
         else
         {
-            Cursor.lockState = CursorLockMode.Locked; // Lock the cursor when the case file is closed
-            starterAssets.cursorInputForLook = true; // Re-enable mouse look input when the case file is closed
-            GameManager.Instance.closeCaseFile(); // Call the method to close the case file
+            if (!GameManager.Instance.pingRunning) // Check if the ping effect is not already running
+            {
+                GameManager.Instance.StartCoroutine("pingFile"); // Notify the player that they do not have a case fileUI
+            }
+           
         }
-
     }
 }

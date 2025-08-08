@@ -23,6 +23,27 @@ public class LevelManager : MonoBehaviour
         "Date: 20XX/10/03, 09:32hrs",
         "Date: 20XX/10/04, 16:48hrs"
     };
+    public int[] culpritList = new int[]
+    {
+        1,
+        2,
+        2,
+        2
+    };
+    public String[] causeList = new String[]
+    {
+        "Crossing unfocused",
+        "Amber Light",
+        "Red Light",
+        "DUI"
+    };
+    public int[] clueNumber = new int[]
+    {
+        3,
+        4,
+        3,
+        3
+    };
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
