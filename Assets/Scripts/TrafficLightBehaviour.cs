@@ -3,18 +3,15 @@ using System.Collections;
 public class TrafficLightBehaviour : MonoBehaviour
 {
     public string color;
-    [SerializeField]
-    public float greenLightDuration = 10f;
-    [SerializeField]
-    public float redLightDuration = 10f;
-    [SerializeField]
-    public float blinkingLightDuration = 5f;
+    
     [SerializeField]
     GameObject greenLight;
     [SerializeField]
     GameObject redLight;
     [SerializeField]
     GameObject orangeLight;
+    [SerializeField]
+    public string trafficLightDirection;
 
     Material material;
     void Awake()
@@ -24,26 +21,36 @@ public class TrafficLightBehaviour : MonoBehaviour
         greenLight.SetActive(false);
         redLight.SetActive(false);
         orangeLight.SetActive(false);
-        StartCoroutine(TrafficLightCycle());
+        
     }
-
-    IEnumerator TrafficLightCycle()
+    public void SetColor(string newColor)
     {
-        while (true)
+        color = newColor;
+        if (newColor == "green")
         {
-            color = "green";
             greenLight.SetActive(true);
             redLight.SetActive(false);
-            yield return new WaitForSeconds(greenLightDuration);
-            color = "blinking";
+            orangeLight.SetActive(false);
+
+        }
+        else if (newColor == "red")
+        {
             greenLight.SetActive(false);
-            orangeLight.SetActive(true);
-            yield return new WaitForSeconds(blinkingLightDuration);
-            color = "red";
             redLight.SetActive(true);
             orangeLight.SetActive(false);
-            yield return new WaitForSeconds(redLightDuration);
-            
+
+        }
+        else if (newColor == "orange")
+        {
+            greenLight.SetActive(false);
+                redLight.SetActive(false);
+                orangeLight.SetActive(true);
+
+        }
+        else
+        {
+            Debug.LogWarning("Invalid traffic light color: " + color);
         }
     }
+    
 }

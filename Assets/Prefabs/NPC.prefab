@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2366446462261946182}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Textbox position
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 4262465270705313536}
   - component: {fileID: 515555731986979773}
   - component: {fileID: 2836059002671005774}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 6397589910861383834}
   - component: {fileID: 781268518885141646}
   - component: {fileID: 71873614413578486}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: NPC
   m_TagString: BackgroundNPC
   m_Icon: {fileID: 0}
@@ -309,7 +309,7 @@ GameObject:
   - component: {fileID: 8457613301512429350}
   - component: {fileID: 4823533225199227011}
   - component: {fileID: 7283541744310527049}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: npcModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}

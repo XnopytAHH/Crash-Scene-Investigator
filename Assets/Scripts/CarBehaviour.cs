@@ -32,7 +32,7 @@ public class CarBehaviour : MonoBehaviour
 
         startPos = transform;
         carAgent = GetComponent<NavMeshAgent>();
-        carAgent.speed = Random.Range(2f, 4f);
+        carAgent.speed = 7;
 
         StartCoroutine(SwitchState("Idle"));
     }

@@ -88,10 +88,10 @@ public class PedestrianBehaviour : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         atLight = true;
-        if (other.CompareTag("TrafficLight"))
+        if (other.CompareTag("TrafficLight") && other.GetComponent<PedestrianTrafficLightBehaviour>() != null)
         {
-            var light = other.GetComponent<TrafficLightBehaviour>();
-            if (light.color == "red" || light.color == "blinking")
+            var light = other.GetComponent<PedestrianTrafficLightBehaviour>();
+            if (light.color == "red" || light.color == "flashing")
             {
                 
                 waitingForLight = true;
@@ -107,7 +107,7 @@ public class PedestrianBehaviour : MonoBehaviour
     void OnTriggerStay(Collider other)
     {
 
-        var light = other.GetComponent<TrafficLightBehaviour>();
+        var light = other.GetComponent<PedestrianTrafficLightBehaviour>();
         if (light != null && light.color == "green")
         {
             waitingForLight = false;
@@ -150,6 +150,11 @@ public class PedestrianBehaviour : MonoBehaviour
             else
             {
                 myDialogue.SetActive(true);
+            }
+            
+            if (screenPoint.z < 0)
+            {
+                myDialogue.SetActive(false);
             }
             yield return null;
         }

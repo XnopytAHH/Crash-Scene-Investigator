@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 662905291806226632}
   - component: {fileID: 2026199960626241754}
   m_Layer: 0
-  m_Name: Point Light (2)
+  m_Name: Red
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,8 +44,8 @@ Light:
   serializedVersion: 11
   m_Type: 2
   m_Color: {r: 1, g: 0, b: 0, a: 1}
-  m_Intensity: 5.03
-  m_Range: 10
+  m_Intensity: 1
+  m_Range: 0.2
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 7768527912883914288}
   - component: {fileID: 4075506751872191055}
   m_Layer: 0
-  m_Name: Point Light (1)
+  m_Name: Orange
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -165,8 +165,8 @@ Light:
   serializedVersion: 11
   m_Type: 2
   m_Color: {r: 1, g: 0.65179634, b: 0, a: 1}
-  m_Intensity: 5.03
-  m_Range: 10
+  m_Intensity: 1
+  m_Range: 0.2
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -254,7 +254,7 @@ GameObject:
   - component: {fileID: 7451911767436987653}
   - component: {fileID: 3724298954676943887}
   m_Layer: 0
-  m_Name: Point Light
+  m_Name: Green
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -286,8 +286,8 @@ Light:
   serializedVersion: 11
   m_Type: 2
   m_Color: {r: 0.07971394, g: 1, b: 0, a: 1}
-  m_Intensity: 5.03
-  m_Range: 10
+  m_Intensity: 1
+  m_Range: 0.2
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -472,14 +472,14 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4096
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.920967, y: 5.245523, z: 9.326263}
-  m_Center: {x: 32.179348, y: -0.36597013, z: 3.3871155}
+  m_Size: {x: 1.668644, y: 5.245523, z: 9.326263}
+  m_Center: {x: 30.400496, y: -0.36597013, z: 3.3871155}
 --- !u!114 &2940345638861821991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -493,9 +493,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: 
-  greenLightDuration: 10
-  redLightDuration: 10
-  blinkingLightDuration: 5
   greenLight: {fileID: 4287166850268327890}
-  redLight: {fileID: 2787101624533672386}
-  orangeLight: {fileID: 2613986185903391915}
+  redLight: {fileID: 2613986185903391915}
+  orangeLight: {fileID: 2787101624533672386}
+  trafficLightDirection: 

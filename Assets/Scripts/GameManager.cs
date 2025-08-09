@@ -582,7 +582,8 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator StartLevel()
     {
-        
+        TrafficControl trafficControl = GameObject.Find("trafficManager").GetComponent<TrafficControl>();
+        StartCoroutine(trafficControl.InitializeTrafficLights());
         yield return new WaitForSeconds(1f); // Wait for 1 second before starting the level
         Cursor.lockState = CursorLockMode.Locked; // Lock the cursor to the game window
         player = GameObject.FindWithTag("Player"); // Find the player GameObject
@@ -610,9 +611,7 @@ public class GameManager : MonoBehaviour
         inCutscene = true; // Set the cutscene state to true
         
         GameObject.Find("AccidentElements").GetComponent<Animator>().Play("Level1Accident", 0, 0f); // Play the accident cutscene animation
-        GameObject.Find("AccidentElements").GetComponent<Animator>().speed = 0;
-        yield return new WaitForSecondsRealtime(3f); // Wait for 2 seconds in real time to allow the cutscene to start
-        GameObject.Find("AccidentElements").GetComponent<Animator>().speed = 1;
+        
         Time.timeScale = 1f; // Resume the game after the cutscene starts
         while (inCutscene)
         {
