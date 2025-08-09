@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 using TMPro;
+using System;
+using Unity.VisualScripting;
 
 public class PedestrianBehaviour : MonoBehaviour
 {
@@ -13,7 +15,8 @@ public class PedestrianBehaviour : MonoBehaviour
     Transform targetTransform;
     string currentState;
 
-    [SerializeField] Transform endPoint;
+    [SerializeField] Transform[] endPoint;
+    int endPointIndex = 0;
 
     bool waitingForLight = false;
     bool isTalking = false;
@@ -40,7 +43,7 @@ public class PedestrianBehaviour : MonoBehaviour
         };
 
         pedestrianAgent = GetComponent<NavMeshAgent>();
-        pedestrianAgent.speed = Random.Range(2f, 4f);
+        pedestrianAgent.speed = UnityEngine.Random.Range(2f, 4f);
 
         StartCoroutine(SwitchState("Idle"));
     }
@@ -57,15 +60,28 @@ public class PedestrianBehaviour : MonoBehaviour
         while (currentState == "Idle")
         {
             pedestrianAgent.ResetPath();
-            if (!isTalking && !waitingForLight &&
-                (transform.position.x != endPoint.position.x || transform.position.z != endPoint.position.z))
+            if (Mathf.Approximately(transform.position.x, endPoint[endPointIndex].position.x) && Mathf.Approximately(transform.position.z, endPoint[endPointIndex].position.z))
             {
-                yield return new WaitForSeconds(2f);
-                StartCoroutine(SwitchState("Walking"));
-                yield break;
-            }
+                if (!isTalking && !waitingForLight
+                    )
+                {
+                    yield return new WaitForSeconds(2f);
+                    StartCoroutine(SwitchState("Walking"));
+                    yield break;
+                }
 
-            yield return null;
+                yield return null;
+            }
+            else
+            {
+                endPointIndex = (endPointIndex + 1);
+                if (endPointIndex >= endPoint.Length)
+                {
+                    endPointIndex = 0;
+                    pedestrianAgent.Warp(endPoint[0].position);
+                }
+                yield return null;
+            }
         }
     }
 
@@ -73,9 +89,9 @@ public class PedestrianBehaviour : MonoBehaviour
     {
         while (currentState == "Walking")
         {
-            pedestrianAgent.SetDestination(endPoint.position);
+            pedestrianAgent.SetDestination(endPoint[endPointIndex].position);
 
-            if (Vector3.Distance(transform.position, endPoint.position) < 0.5f)
+            if (Vector3.Distance(transform.position, endPoint[endPointIndex].position) < 0.5f)
             {
                 StartCoroutine(SwitchState("Idle"));
                 yield break;
@@ -124,7 +140,7 @@ public class PedestrianBehaviour : MonoBehaviour
         }
         isTalking = true;
         playerUICanvas = GameObject.FindWithTag("UI").transform;
-        int randomIndex = Random.Range(0, backgroundNPCLines.Length);
+        int randomIndex = UnityEngine.Random.Range(0, backgroundNPCLines.Length);
         GameObject myDialogue = Instantiate(textboxPrefab, playerUICanvas);
         myDialogue.GetComponent<Textbox>().textboxCreated(); // Ensure the textbox is initialized
         myDialogue.transform.SetParent(playerUICanvas, false);

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 using TMPro;
+using JetBrains.Annotations;
 
 public class CarBehaviour : MonoBehaviour
 {
@@ -9,8 +10,10 @@ public class CarBehaviour : MonoBehaviour
     NavMeshAgent carAgent;
     Transform targetTransform;
     string currentState;
+    Renderer carRenderer;
 
     [SerializeField] Transform endPoint;
+    [SerializeField] Transform startPoint;
 
     bool waitingForLight = false;
     bool waitingForPlayer = false;
@@ -26,14 +29,13 @@ public class CarBehaviour : MonoBehaviour
     [SerializeField]
     AudioClip honkSound;
     AudioSource audioSource;
-    Transform startPos;
+    
     void Awake()
     {
-
-        startPos = transform;
         carAgent = GetComponent<NavMeshAgent>();
-        carAgent.speed = 7;
-
+        carAgent.speed = Random.Range(7f,8.5f );
+        carRenderer = transform.GetChild(0).GetComponent<Renderer>();
+        carRenderer.material.color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         StartCoroutine(SwitchState("Idle"));
     }
 
@@ -73,9 +75,14 @@ public class CarBehaviour : MonoBehaviour
     {
         while (currentState == "Driving")
         {
-            if (carAgent.transform.position.x == endPoint.position.x && carAgent.transform.position.z == endPoint.position.z)
+            if (Mathf.Approximately(carAgent.transform.position.x, endPoint.position.x) && Mathf.Approximately(carAgent.transform.position.z, endPoint.position.z))
             {
-                carAgent.transform.position = startPos.position;
+                Debug.Log("Car has reached the endpoint.");
+
+                carAgent.Warp(startPoint.position);
+                carRenderer.material.color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+                carAgent.speed = Random.Range(6f,8.5f );
+                yield return new WaitForSeconds(Random.Range(1f, 5f));
                 StartCoroutine(SwitchState("Idle"));
                 yield break;
             }
