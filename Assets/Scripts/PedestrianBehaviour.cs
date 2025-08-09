@@ -13,10 +13,10 @@ public class PedestrianBehaviour : MonoBehaviour
 
     NavMeshAgent pedestrianAgent;
     Transform targetTransform;
-    string currentState;
+    public string currentState;
 
     [SerializeField] Transform[] endPoint;
-    int endPointIndex = 0;
+    public int endPointIndex = 0;
 
     bool waitingForLight = false;
     bool isTalking = false;
@@ -60,10 +60,9 @@ public class PedestrianBehaviour : MonoBehaviour
         while (currentState == "Idle")
         {
             pedestrianAgent.ResetPath();
-            if (Mathf.Approximately(transform.position.x, endPoint[endPointIndex].position.x) && Mathf.Approximately(transform.position.z, endPoint[endPointIndex].position.z))
+            if (!(Mathf.Floor(transform.position.x) == Mathf.Floor(endPoint[endPointIndex].position.x) && Mathf.Floor(transform.position.z) == Mathf.Floor(endPoint[endPointIndex].position.z)))
             {
-                if (!isTalking && !waitingForLight
-                    )
+                if (!isTalking && !waitingForLight)
                 {
                     yield return new WaitForSeconds(2f);
                     StartCoroutine(SwitchState("Walking"));
@@ -74,13 +73,15 @@ public class PedestrianBehaviour : MonoBehaviour
             }
             else
             {
-                endPointIndex = (endPointIndex + 1);
+                Debug.Log("Pedestrian reached endpoint: " + endPoint[endPointIndex].name);
+                endPointIndex +=1;
                 if (endPointIndex >= endPoint.Length)
                 {
                     endPointIndex = 0;
                     pedestrianAgent.Warp(endPoint[0].position);
                 }
                 yield return null;
+
             }
         }
     }
@@ -91,7 +92,7 @@ public class PedestrianBehaviour : MonoBehaviour
         {
             pedestrianAgent.SetDestination(endPoint[endPointIndex].position);
 
-            if (Vector3.Distance(transform.position, endPoint[endPointIndex].position) < 0.5f)
+            if ((Mathf.Floor(transform.position.x) == Mathf.Floor(endPoint[endPointIndex].position.x) && Mathf.Floor(transform.position.z) == Mathf.Floor(endPoint[endPointIndex].position.z)))
             {
                 StartCoroutine(SwitchState("Idle"));
                 yield break;

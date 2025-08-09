@@ -17,11 +17,12 @@ TagManager:
   - Impact
   - CutsceneCamera
   - Car
+  - TrafficControl
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
   - Outlined
@@ -32,7 +33,7 @@ TagManager:
   - Car
   - NPC
   - AccidentElements
-  - 
+  - onlyPlayer
   - 
   - 
   - 

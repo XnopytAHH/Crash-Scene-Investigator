@@ -582,7 +582,7 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator StartLevel()
     {
-        TrafficControl trafficControl = GameObject.Find("trafficManager").GetComponent<TrafficControl>();
+        TrafficControl trafficControl = GameObject.FindWithTag("TrafficControl").GetComponent<TrafficControl>();
         StartCoroutine(trafficControl.InitializeTrafficLights());
         yield return new WaitForSeconds(1f); // Wait for 1 second before starting the level
         Cursor.lockState = CursorLockMode.Locked; // Lock the cursor to the game window

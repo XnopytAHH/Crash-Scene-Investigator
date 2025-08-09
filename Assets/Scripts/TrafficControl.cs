@@ -9,7 +9,7 @@ public class TrafficControl : MonoBehaviour
     [SerializeField] private float ewGreenTotal = 30f;
 
 
-    [SerializeField] private float pedestrianWalk = 10f;
+    [SerializeField] private float pedestrianWalk = 15f;
     [SerializeField] private float pedestrianFlashing = 17f;
 
 
@@ -21,13 +21,15 @@ public class TrafficControl : MonoBehaviour
     string startsOn;
     void Awake()
     {
-        trafficLights = GameObject.FindGameObjectsWithTag("TrafficLight");
+        Debug.Log(gameObject.name);
+        
     }
+    
     public IEnumerator InitializeTrafficLights()
     {
         if (startsOn == "NS")
         {
-
+            trafficLights = GameObject.FindGameObjectsWithTag("TrafficLight");
             foreach (GameObject light in trafficLights)
             {
                 if (light.GetComponent<TrafficLightBehaviour>() != null && light.GetComponent<TrafficLightBehaviour>().trafficLightDirection == "EW")
@@ -38,7 +40,7 @@ public class TrafficControl : MonoBehaviour
                 {
                     light.GetComponent<TrafficLightBehaviour>().SetColor("green");
                 }
-                
+
                 if (light.GetComponent<PedestrianTrafficLightBehaviour>() != null && light.GetComponent<PedestrianTrafficLightBehaviour>().trafficLightDirection == "EW")
                 {
                     light.GetComponent<PedestrianTrafficLightBehaviour>().SetColor("red");
@@ -56,7 +58,7 @@ public class TrafficControl : MonoBehaviour
 
             foreach (GameObject light in trafficLights)
             {
-                if (light.GetComponent<TrafficLightBehaviour>() != null &&light.GetComponent<TrafficLightBehaviour>().trafficLightDirection == "NS")
+                if (light.GetComponent<TrafficLightBehaviour>() != null && light.GetComponent<TrafficLightBehaviour>().trafficLightDirection == "NS")
                 {
                     light.GetComponent<TrafficLightBehaviour>().SetColor("red");
                 }
@@ -64,7 +66,7 @@ public class TrafficControl : MonoBehaviour
                 {
                     light.GetComponent<TrafficLightBehaviour>().SetColor("green");
                 }
-                
+
                 if (light.GetComponent<PedestrianTrafficLightBehaviour>() != null && light.GetComponent<PedestrianTrafficLightBehaviour>().trafficLightDirection == "EW")
                 {
                     StartCoroutine(EWpedestrianGreen());
@@ -192,7 +194,7 @@ public class TrafficControl : MonoBehaviour
                 light.GetComponent<PedestrianTrafficLightBehaviour>().SetColor("flashing");
             }
         }
-        yield return new WaitForSeconds(pedestrianWalk);
+        yield return new WaitForSeconds(pedestrianFlashing);
         StartCoroutine(NSpedestrianRed());
     }
     IEnumerator EWpedestrianFlash()
@@ -204,7 +206,7 @@ public class TrafficControl : MonoBehaviour
                 light.GetComponent<PedestrianTrafficLightBehaviour>().SetColor("flashing");
             }
         }
-        yield return new WaitForSeconds(pedestrianWalk);
+        yield return new WaitForSeconds(pedestrianFlashing);
         StartCoroutine(EWpedestrianRed());
     }
     IEnumerator NSpedestrianRed()
