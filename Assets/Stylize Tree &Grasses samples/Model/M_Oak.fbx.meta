@@ -1,12 +1,5 @@
 fileFormatVersion: 2
 guid: 31f43c64468ab314da56d2e0e3f7a25e
-AssetOrigin:
-  serializedVersion: 1
-  productId: 304714
-  packageName: Stylize Tree &Grassess samples
-  packageVersion: 1.1
-  assetPath: Assets/Stylize Tree &Grasses samples/Model/M_Oak.fbx
-  uploadId: 719853
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -39,13 +32,10 @@ ModelImporter:
     clipAnimations: []
     isReadable: 0
   meshes:
-    lODScreenPercentages:
-    - 0.25
-    - 0.125
-    - 0.01
+    lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 1
+    addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
     importPhysicalCameras: 1
@@ -56,7 +46,7 @@ ModelImporter:
     nodeNameCollisionStrategy: 1
     fileIdsGeneration: 2
     swapUVChannels: 0
-    generateSecondaryUV: 1
+    generateSecondaryUV: 0
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1
@@ -115,3 +105,10 @@ ModelImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304714
+  packageName: Stylize Tree &Grassess samples
+  packageVersion: 1.1
+  assetPath: Assets/Stylize Tree &Grasses samples/Model/M_Oak.fbx
+  uploadId: 719853
