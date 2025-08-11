@@ -1025,6 +1025,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3269791793727318488, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
+      propertyPath: m_fontSize
+      value: 42.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 3269791793727318488, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
+      propertyPath: m_margin.w
+      value: 3.0773754
+      objectReference: {fileID: 0}
+    - target: {fileID: 3269791793727318488, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
+      propertyPath: m_margin.z
+      value: -362.97763
+      objectReference: {fileID: 0}
     - target: {fileID: 4421769582352665971, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
       propertyPath: m_Name
       value: GameManager

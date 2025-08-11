@@ -12,6 +12,7 @@ using Unity.Mathematics;
 using UnityEngine.Rendering;
 using Unity.VisualScripting;
 using System;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -226,6 +227,11 @@ public class GameManager : MonoBehaviour
     /// pulsing is a bool that indicates whether the vignette effect is currently pulsing.
     /// </summary>
     bool pulsing=false;
+    ///<summary>
+    /// tutorialImages is a list of sprites that represent the tutorial images.
+    /// </summary>
+    [SerializeField]
+    Sprite[] tutorialImages;
 
     /// <summary>
     /// Start is called before the first frame update
@@ -309,10 +315,19 @@ public class GameManager : MonoBehaviour
         { Debug.Log("Player object found: " + player.name); }
 
         //loop through all toggles and set them to false
-        
-        
-        
-        if (SceneManager.GetActiveScene().name == "office")
+        if (SceneManager.GetActiveScene().name == "Tutorial")
+        {
+            backgroundAnimator.Play("Closed", 0, 0f); // Play the fade-in animation immediately
+            backgroundAnimator.SetBool("isOpen", true); // Ensure the background is closed at the start
+
+            deathSpawnParticles = GameObject.FindWithTag("NPC").GetComponentInChildren<VisualEffect>(false);
+            deathSpawnParticles.Stop(); // Stop the death spawn particles if they are playing
+            Debug.Log("Starting tutorial scene, background animator is set to closed");
+            StartCoroutine(StartTutorial()); // Start the tutorial coroutine
+        }
+
+
+        else if (SceneManager.GetActiveScene().name == "office")
         {
             caseFileObject = FindObjectsByType<CollectibleBehavior>(FindObjectsInactive.Include, FindObjectsSortMode.None)[0].gameObject; // Find the case file collectible object in the office scene
 
@@ -355,14 +370,14 @@ public class GameManager : MonoBehaviour
         }
         else if (SceneManager.GetActiveScene().name == "MainMenu")
         {
-            
-        
+
+
             Toggle[] toggles = GameObject.FindObjectsByType<Toggle>(FindObjectsSortMode.None);
             foreach (Toggle toggle in toggles)
             {
-            toggle.isOn = false; // Set all toggles to false
+                toggle.isOn = false; // Set all toggles to false
             }
-        
+
             crosshair.enabled = false; // Disable the crosshair in the main menu
         }
         else
@@ -383,6 +398,55 @@ public class GameManager : MonoBehaviour
             StartCoroutine(StartLevel()); // Start the level coroutine if not in the office scene
         }
 
+
+    }
+    public IEnumerator StartTutorial()
+    {
+        Time.timeScale = 1; // Pause the game at the start of the tutorial
+        bigBoss = GameObject.FindWithTag("NPC").GetComponent<NPCBehavior>(); // Find the big boss NPC
+        bigBossAnimator = GameObject.FindWithTag("NPC").GetComponent<Animator>();
+        bigBossAnimator.Play("BossStandby", 0, 0f); // Play the standby animation for the big boss NPC
+        player.GetComponent<PlayerBehavior>().isBusy = true; // Set the player as busy while starting the day
+        player.GetComponent<PlayerBehavior>().hasFile = false; // Reset the case file flag
+        backgroundAnimator.SetBool("isOpen", true);
+        
+        yield return new WaitForSeconds(1f); // Wait for the end of the frame to ensure everything is set up correctly
+        beenToLevel = false; // Reset the flag indicating whether the player has been to the level before
+
+
+        //Death spawn in and dialogue
+        deathSpawnParticles.Play(); // Play the death spawn particles effect
+
+        yield return new WaitForSeconds(2f); // Wait for 2 seconds before starting the dialogue
+
+        bigBossAnimator.Play("BossSpawn", 0, 0f); // Play the spawn in animation for the big boss NPC
+        yield return new WaitForSeconds(3f); // Wait for 3 seconds to allow the animation to play
+        deathSpawnParticles.Stop(); // Stop the death spawn particles effect
+
+        yield return null; // Wait for the end of the frame to ensure everything is set up correctly
+        // Start the dialogue with the big boss NPC
+        Dialogue currentDialogueLines = bigBoss.getNPCLines(6); // Get the dialogue lines for the big boss NPC
+
+        StartCoroutine(NPCDialogue(bigBoss.gameObject, currentDialogueLines)); // Start the dialogue coroutine with the big boss NPC
+        yield return new WaitUntil(() => !player.GetComponent<PlayerBehavior>().isBusy); // Wait until the player is no longer busy
+        openCaseFile();
+       
+        Image tutorialImage = GameObject.Find("TutorialForeground").GetComponent<Image>();
+        tutorialImage.enabled = true; // Enable the tutorial image before showing all images
+        for (int i = 0; i < tutorialImages.Length; i++)
+        {
+            Debug.Log("Showing tutorial image: " + i);
+            tutorialImage.sprite = tutorialImages[i]; // Set the first tutorial image
+            yield return new WaitForSeconds(0.5f); // Wait for a short duration before showing the next image
+            yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)); // Wait for the player to press space or click to continue
+
+        }
+        closeCaseFile();
+        player.GetComponent<PlayerBehavior>().isBusy = true; // Set the player as busy while starting the day
+        StartCoroutine(NPCDialogue(bigBoss.gameObject, bigBoss.getNPCLines(7))); // Start the dialogue coroutine with the big boss NPC for the next lines
+        tutorialImage.enabled = false; // Disable the tutorial image after showing all images
+        yield return new WaitUntil(() => !player.GetComponent<PlayerBehavior>().isBusy ); // Wait until the player is no longer busy
+        StartCoroutine(StartGameCoroutine()); // Start the game coroutine to transition to the office scene
 
     }
     IEnumerator transitionToNewScene()
@@ -416,7 +480,7 @@ public class GameManager : MonoBehaviour
         startingNewDay = true; // Set the flag to indicate a new day is starting
         Cursor.lockState = CursorLockMode.Locked; // Lock the cursor at the start
         Debug.Log("Starting new day: " + currentLevel);
-        StartCoroutine(StartGameCoroutine());
+        SceneManager.LoadScene("Tutorial");
     }
     IEnumerator StartGameCoroutine()
     {
@@ -447,6 +511,16 @@ public class GameManager : MonoBehaviour
         dialogueUI.enabled = true; // Show the dialogue UI
         foreach (DialogueLine line in dialogueLines.dialogueLines)
         {
+            if (line.lineImage != null)
+            {
+                dialogueUI.transform.GetChild(0).transform.GetChild(1).GetComponent<Image>().enabled = true; // Enable the image component
+                dialogueUI.transform.GetChild(0).transform.GetChild(1).GetComponent<Image>().sprite = line.lineImage;
+            }
+            else
+            {
+                dialogueUI.transform.GetChild(0).transform.GetChild(1).GetComponent<Image>().enabled = false; // Disable the image component
+                dialogueUI.transform.GetChild(0).transform.GetChild(1).GetComponent<Image>().sprite = null;
+            }
             bool linePrinting = true; // Flag to check if the player is typing
             yield return stepThruDialogue(dialogueUI.transform.GetChild(0).transform.GetChild(0).GetComponent<TextMeshProUGUI>(), dialogueSpeed, line);
             linePrinting = false; // Set the flag to false after the line is printed
@@ -511,6 +585,7 @@ public class GameManager : MonoBehaviour
     }
     public void openCaseFile()
     {
+        
         caseFileCanvas.enabled = true; // Show the case file canvas
         isPaused = true; // Set the paused state to true when the case file is open
         crosshair.enabled = false; // Disable the crosshair when the case file is open
@@ -563,14 +638,19 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Starting dialogue with big boss: " + bigBoss.gameObject.name);
         StartCoroutine(NPCDialogue(bigBoss.gameObject, currentDialogueLines)); // Start the dialogue coroutine with the big boss NPC
-        yield return null; // Wait for the end of the frame to ensure everything is set up correctly
+        yield return new WaitUntil(() => !player.GetComponent<PlayerBehavior>().isBusy); // Wait for the end of the frame to ensure everything is set up correctly
         startingNewDay = false; // Reset the flag after starting the day
 
         caseFile.UpdateDetails("Case File " + currentLevel + " - " + levelManager.levelName[currentLevel], levelManager.levelDate[currentLevel]); // Update the case file details with the current day and date
+    
         caseFileObject.SetActive(true); // Show the case file object after starting the day
     }
     public void initiateLevel()
     {
+        if (SceneManager.GetActiveScene().name == "Tutorial")
+        {
+            return;
+        }
         StartCoroutine(changeLevel());
     }
     IEnumerator changeLevel()

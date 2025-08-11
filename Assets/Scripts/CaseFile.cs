@@ -86,6 +86,11 @@ public class CaseFile : MonoBehaviour
             toLevel.gameObject.SetActive(false); // Hide the toLevel button
            
         }
+        else if (SceneManager.GetActiveScene().name == "Tutorial")
+        {
+            toOffice.gameObject.SetActive(true); // Hide the toOffice button
+            toLevel.gameObject.SetActive(false); // Hide the toLevel button
+        }
         else
         {
             toOffice.gameObject.SetActive(false); // Hide the toOffice button
