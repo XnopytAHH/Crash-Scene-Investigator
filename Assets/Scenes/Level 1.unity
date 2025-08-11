@@ -14029,12 +14029,16 @@ MonoBehaviour:
     - AudioClip: {fileID: 8300000, guid: 1fca5854c101aee48bbc62b980347fe1, type: 3}
       Line: Hi I is death, i am death and my name is death, i am the actual death
         and the one and only death
+      lineImage: {fileID: 0}
     - AudioClip: {fileID: 8300000, guid: 1fca5854c101aee48bbc62b980347fe1, type: 3}
       Line: This text line needs to be replaced
+      lineImage: {fileID: 0}
     - AudioClip: {fileID: 8300000, guid: 1fca5854c101aee48bbc62b980347fe1, type: 3}
       Line: What day is it
+      lineImage: {fileID: 0}
     - AudioClip: {fileID: 8300000, guid: 1fca5854c101aee48bbc62b980347fe1, type: 3}
       Line: Does my voice sound ok
+      lineImage: {fileID: 0}
   description: 
 --- !u!1001 &2052642280
 PrefabInstance:
@@ -15314,9 +15318,29 @@ PrefabInstance:
       propertyPath: timerendScoreUI
       value: 
       objectReference: {fileID: 5027433565859593640}
+    - target: {fileID: 3768323537320568285, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3768323537320568285, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4421769582352665971, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
       propertyPath: m_Name
       value: GameManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 8129756733776010949, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8129756733776010949, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8129756733776010949, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8401533457598082200, guid: e79f63e0634a85b4cb019ee44e528b62, type: 3}
       propertyPath: m_AnchoredPosition.x

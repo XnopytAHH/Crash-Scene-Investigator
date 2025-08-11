@@ -232,7 +232,36 @@ public class GameManager : MonoBehaviour
     /// </summary>
     [SerializeField]
     Sprite[] tutorialImages;
-
+    ///<summary>
+    /// FileIcon is a reference to the image that holds the file icon sprite.
+    /// </summary>
+    [SerializeField]
+    GameObject fileIcon;
+    /// <summary>
+    /// RankSprites is a reference to the array of sprites that represent the ranks.
+    /// </summary>
+    [SerializeField]
+    Sprite[] rankSprites;
+    ///<summary>
+    /// bossSprites is a reference to the array of sprites that represent the bosses.
+    /// </summary>
+    [SerializeField]
+    Sprite[] bossSprites;
+    ///<summary>
+    /// rankIcon is a reference to the image that holds the rank icon sprite.
+    /// </summary>
+    [SerializeField]
+    Image rankIcon;
+    /// <summary>
+    /// BossIcon is a reference to the image that holds the boss icon sprite.
+    /// </summary>
+    [SerializeField]
+    Image bossIcon;
+    ///<summary>
+    /// optionsMenu is a reference to the options menu GameObject.
+    /// </summary>
+    [SerializeField]
+    GameObject optionsMenu;
     /// <summary>
     /// Start is called before the first frame update
     /// </summary>
@@ -251,6 +280,7 @@ public class GameManager : MonoBehaviour
         Canvas dialogueUI = GameObject.FindWithTag("UI Dialogue").GetComponent<Canvas>();
         caseFileCanvas = GameObject.FindWithTag("CaseFileUI").GetComponent<Canvas>();
         caseFileCanvas.enabled = false; // Hide the case file canvas at the start
+        optionsMenu.SetActive(false); // Hide the options menu at the start
         audioSource = gameObject.GetComponent<AudioSource>();
         dialogueUI.enabled = false;
 
@@ -295,6 +325,18 @@ public class GameManager : MonoBehaviour
                 player.GetComponent<FirstPersonController>().enabled = true; // Enable the character controller
             }
 
+        }
+        if (player == null)
+        {
+            fileIcon.SetActive(false); // Hide the file icon if the player does not have the case file
+        }
+        else if (player.GetComponent<PlayerBehavior>().hasFile)
+        {
+            fileIcon.SetActive(true); // Show the file icon if the player has the case file
+        }
+        else
+        {
+            fileIcon.SetActive(false); // Hide the file icon if the player does not have the case file
         }
 
 
@@ -394,6 +436,7 @@ public class GameManager : MonoBehaviour
             {
                 Debug.LogError("Vignette or Lens Distortion effect not found in volume profile!"); // Log an error if the effects are not found
             }
+            backgroundAnimator.Play("Closed", 0, 0f); // Play the fade-in animation immediately
             backgroundAnimator.SetBool("isOpen", true); // Ensure the background is open in other scenes
             StartCoroutine(StartLevel()); // Start the level coroutine if not in the office scene
         }
@@ -595,6 +638,16 @@ public class GameManager : MonoBehaviour
         caseFileCanvas.enabled = false; // Hide the case file canvas
         isPaused = false; // Set the paused state to true when the case file is open
         crosshair.enabled = true; // Enable the crosshair when the case file is closed
+        closeOptions(); // Close the options menu if it is open
+    }
+    public void openOptions()
+    {
+        optionsMenu.SetActive(true); // Show the options menu
+        
+    }
+    public void closeOptions()
+    {
+        optionsMenu.SetActive(false); // Hide the options menu
     }
     private IEnumerator StartDayCoroutine()
     {
@@ -642,7 +695,7 @@ public class GameManager : MonoBehaviour
         startingNewDay = false; // Reset the flag after starting the day
 
         caseFile.UpdateDetails("Case File " + currentLevel + " - " + levelManager.levelName[currentLevel], levelManager.levelDate[currentLevel]); // Update the case file details with the current day and date
-    
+
         caseFileObject.SetActive(true); // Show the case file object after starting the day
     }
     public void initiateLevel()
@@ -882,7 +935,7 @@ public class GameManager : MonoBehaviour
         int totalScore = 0;
         int cluesFound = GameObject.Find("EvidenceCanvas").transform.childCount; // Count the number of clues found
         float timeRemaining = MathF.Ceiling(timer);
-        Debug.Log(currentCause.name +"|"+ levelManager.causeList[currentLevel] + " | " + culpritDropdown.value + " | " + levelManager.culpritList[currentLevel]);
+        Debug.Log(currentCause.name + "|" + levelManager.causeList[currentLevel] + " | " + culpritDropdown.value + " | " + levelManager.culpritList[currentLevel]);
         if (currentCause.name == levelManager.causeList[currentLevel])
         {
             correctCause = true;
@@ -940,6 +993,32 @@ public class GameManager : MonoBehaviour
 
         totalscoreUI.text = totalScore + " points"; // Update the total score UI text
 
+        //Determine rank
+        if (!correctCause && !correctCulprit)
+        {
+            rankIcon.sprite = rankSprites[0]; // Set the rank icon to "F"
+            bossIcon.sprite = bossSprites[0]; // Set the boss icon to the first boss sprite
+        }
+        else if (correctCause ^ correctCulprit)
+        {
+            rankIcon.sprite = rankSprites[1]; // Set the rank icon to "C"
+            bossIcon.sprite = bossSprites[1]; // Set the boss icon to the second boss sprite
+        }
+        else if (cluesFound <= 2)
+        {
+            rankIcon.sprite = rankSprites[2]; // Set the rank icon to "B"
+            bossIcon.sprite = bossSprites[2]; // Set the boss icon to the third boss sprite
+        }
+        else if (timeRemaining < 90)
+        {
+            rankIcon.sprite = rankSprites[3]; // Set the rank icon to "A"
+            bossIcon.sprite = bossSprites[3]; // Set the boss icon to the fourth boss sprite
+        }
+        else
+        {
+            rankIcon.sprite = rankSprites[4]; // Set the rank icon to "S"
+            bossIcon.sprite = bossSprites[4]; // Set the boss icon to the fifth boss sprite
+        }
     }
     public void NextLevel()
     {

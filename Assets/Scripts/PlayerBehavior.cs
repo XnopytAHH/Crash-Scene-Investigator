@@ -192,6 +192,7 @@ public class PlayerBehavior : MonoBehaviour
         if (GameManager.Instance.isPaused)
         {
             GameManager.Instance.resumeGame(); // Resume the game if it is paused
+            GameManager.Instance.closeOptions(); // Close the options menu if it is open
         }
         else
         {
