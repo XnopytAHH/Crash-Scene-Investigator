@@ -7,7 +7,9 @@ public class NPCBehavior : MonoBehaviour
     
     [SerializeField]
     public Dialogue[] dialogueLines; // Array of Dialogue objects containing the lines for this NPC
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+                                     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [SerializeField]
+    public string description;
     public Dialogue getNPCLines(int dialogueIndex)
     {
         if (dialogueIndex < dialogueLines.Length)

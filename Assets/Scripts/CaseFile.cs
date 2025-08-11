@@ -43,6 +43,10 @@ public class CaseFile : MonoBehaviour
         // Set the name text of the evidence object
         TextMeshProUGUI evidenceNameText = evidenceObject.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
         evidenceNameText.text = evidence.evidenceName;
+        // Set the description text of the evidence object
+        evidenceObject.GetComponent<EvidencePhoto>().evidenceImage = evidence.evidenceImage; // Assuming EvidencePhoto has a Texture2D field for the image
+        evidenceObject.GetComponent<EvidencePhoto>().evidenceName = evidence.evidenceName; // Assuming EvidencePhoto has a string field for the name
+        evidenceObject.GetComponent<EvidencePhoto>().descriptionText = evidence.evidenceDescription; // Assuming EvidencePhoto has a TextMeshProUGUI component for description
         // Logic to add evidence to the case file
         Debug.Log("Evidence added: " + evidence.evidenceName);
     }

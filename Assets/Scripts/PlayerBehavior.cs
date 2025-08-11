@@ -142,6 +142,8 @@ public class PlayerBehavior : MonoBehaviour
                         {
                             // If the NPC is an interactive NPC, start dialogue
                             Debug.Log("Interacting with NPC: " + currentNPC.name);
+                            EvidenceCamera captureCamera = GameObject.FindWithTag("MainCamera").GetComponent<EvidenceCamera>(); // Find the EvidenceCamera in the scene
+                            modifyInventory(true, currentNPC.name+"'s testimony", currentNPC.GetComponent<NPCBehavior>().description, captureCamera.CaptureView()); // Add the collectible to the player's inventory
                             Dialogue currentDialogueLines = currentNPC.GetComponent<NPCBehavior>().getNPCLines(GameManager.Instance.currentLevel); // Get the dialogue lines for the current NPC
                             isBusy = true; // Set the player as busy to prevent further interactions
                             StartCoroutine(GameManager.Instance.NPCDialogue(currentNPC, currentDialogueLines));
@@ -166,16 +168,16 @@ public class PlayerBehavior : MonoBehaviour
             }
         }
     }
-    public void modifyInventory(bool add, string item, Texture2D itemImage)
+    public void modifyInventory(bool add, string item,string desc, Texture2D itemImage)
     {
         // This method can be used to modify the player's inventory based on the add parameter
         if (add)
         {
             // Logic to add an item to the inventory
             Debug.Log("Item added to inventory.");
-            playerInventory.Add(new Evidence { evidenceName = item, evidenceImage = itemImage });
+            playerInventory.Add(new Evidence { evidenceName = item, evidenceDescription = desc, evidenceImage = itemImage });
             CaseFile caseFile = GameObject.FindWithTag("CaseFileUI").GetComponent<CaseFile>(); // Find the CaseFile component in the scene
-            caseFile.AddEvidence(new Evidence { evidenceName = item, evidenceImage = itemImage }); // Add the evidence to the case file
+            caseFile.AddEvidence(new Evidence { evidenceName = item, evidenceDescription = desc, evidenceImage = itemImage }); // Add the evidence to the case file
         }
         else
         {
