@@ -13,10 +13,11 @@ public class startingCutscene : MonoBehaviour
     private float logoDisplayDuration = 2f;
     private Animator backgroundAnimator;
     private Animator menuAnimator;
-
+    private SoundManager soundManager;
 
     void Start()
     {
+        soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
         StartCoroutine(StartIntro());
     }
 
@@ -49,6 +50,7 @@ public class startingCutscene : MonoBehaviour
         backgroundAnimator.SetBool("isOpen", true);
         Debug.Log("Fade in animation started");
         yield return new WaitForSeconds(3f);
+
         yield return StartCoroutine(StartingCutscene());
 
 
@@ -64,6 +66,7 @@ public class startingCutscene : MonoBehaviour
             yield return null; // Wait for the next frame
         }
         yield return new WaitForSeconds(0.3f); // Wait for 0.3 seconds before stopping the car
+        soundManager.MenuMusic();
         Time.timeScale = 0f; // Pause the game
         myCar.GetComponent<Rigidbody>().linearVelocity = Vector3.zero; // Stop the car
         menuAnimator.SetBool("MenuIn", true); // Trigger the menu animation

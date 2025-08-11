@@ -16,6 +16,11 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
+    /// <summary>
+    /// SoundManager is a reference to the SoundManager script that manages the game's audio.
+    /// </summary>
+    [SerializeField]
+    private SoundManager soundManager;
     [SerializeField]
     private float dialogueSpeed = 0.05f; // Speed of dialogue text appearing
     public static GameManager Instance;
@@ -359,6 +364,7 @@ public class GameManager : MonoBehaviour
         //loop through all toggles and set them to false
         if (SceneManager.GetActiveScene().name == "Tutorial")
         {
+            soundManager.OfficeMusic();
             backgroundAnimator.Play("Closed", 0, 0f); // Play the fade-in animation immediately
             backgroundAnimator.SetBool("isOpen", true); // Ensure the background is closed at the start
 
@@ -372,7 +378,7 @@ public class GameManager : MonoBehaviour
         else if (SceneManager.GetActiveScene().name == "office")
         {
             caseFileObject = FindObjectsByType<CollectibleBehavior>(FindObjectsInactive.Include, FindObjectsSortMode.None)[0].gameObject; // Find the case file collectible object in the office scene
-
+             soundManager.OfficeMusic();
 
             if (caseFileObject != null)
             {
@@ -413,7 +419,7 @@ public class GameManager : MonoBehaviour
         else if (SceneManager.GetActiveScene().name == "MainMenu")
         {
 
-
+            
             Toggle[] toggles = GameObject.FindObjectsByType<Toggle>(FindObjectsSortMode.None);
             foreach (Toggle toggle in toggles)
             {
@@ -424,6 +430,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            soundManager.LevelMusic();
             warningIndicator = GameObject.Find("Global Volume").GetComponent<Volume>();
             volumeProfile = warningIndicator.sharedProfile; // Get the volume profile from the global volume
             if (volumeProfile.TryGet(out Vignette vignetteEffect) && volumeProfile.TryGet(out LensDistortion lensDistortionEffect))
@@ -506,6 +513,7 @@ public class GameManager : MonoBehaviour
 
             lensDistortionEffect.intensity.value = 0f; // Set the lens distortion intensity to a default value
         }
+        
         while (vignetteEffect.intensity.value > 0.0f) // Gradually increase the vignette intensity
         {
             vignetteEffect.intensity.value -= 0.01f; // Gradually increase the vignette intensity
@@ -851,6 +859,8 @@ public class GameManager : MonoBehaviour
 
             lensDistortionEffect.intensity.value = 0f; // Set the lens distortion intensity to a default value
         }
+
+        soundManager.EnterLevelSound(); // Play the sound effect for entering a level
         while (vignetteEffect.intensity.value < 1.0f) // Gradually increase the vignette intensity
         {
             vignetteEffect.intensity.value += 0.01f; // Gradually increase the vignette intensity
