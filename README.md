@@ -1,7 +1,7 @@
-# Crash Scene Investigators
-
+# Crash Scene Investigator
+![Crash Scene Investigator](Assets/Sprites/CSI%20Logo.png)
 ## Brief overview
-Crash Scene Investigators is a game made to educate youth about Road Safety. Investigate crash sites and figure out the culprit, their wrongdoings and convict them!
+Crash Scene Investigator is a game made to educate youth about Road Safety. Investigate crash sites and figure out the culprit, their wrongdoings and convict them!
 ### Controls
 WASD - Movement<br/>
 Space - Jump<br/>
