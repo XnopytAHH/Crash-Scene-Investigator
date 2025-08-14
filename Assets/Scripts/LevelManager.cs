@@ -37,7 +37,7 @@ public class LevelManager : MonoBehaviour
     {
         "what",
         "Crossing unfocused",
-        "Amber Light",
+        "Red Light",
         "Red Light",
         "DUI"
     };
@@ -45,9 +45,26 @@ public class LevelManager : MonoBehaviour
     {
         0,
         3,
-        4,
+        3,
         3,
         3
+    };
+
+    public string[] Culprit1 = new string[]
+    {
+        "",
+        "Pedestrian",
+        "Green Car",
+        "Michael Johnson",
+        "Emily Davis"
+    };
+    public string[] Culprit2 = new string[]
+    {
+        "",
+        "Driver",
+        "Purple Car",
+        "Charlie Green",
+        "David Black"
     };
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

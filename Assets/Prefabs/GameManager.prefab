@@ -214,6 +214,16 @@ MonoBehaviour:
   - Red Light
   - DUI
   clueNumber: 0000000003000000040000000300000003000000
+  Culprit1:
+  - Pedestrian
+  - Green Car
+  - Michael Johnson
+  - Emily Davis
+  Culprit2:
+  - Driver
+  - Purple Car
+  - Charlie Green
+  - David Black
 --- !u!1 &106362421007714211
 GameObject:
   m_ObjectHideFlags: 0
@@ -958,6 +968,7 @@ MonoBehaviour:
   levelMusic: {fileID: 8300000, guid: c603fb1a3e066f242a9a7873774b8294, type: 3}
   officeMusic: {fileID: 8300000, guid: afd6dcb0c37798142bb13d4a2cedb353, type: 3}
   whooshSound: {fileID: 8300000, guid: b8371f66267e3244998abff53db11b39, type: 3}
+  endLevelSound: {fileID: 0}
 --- !u!82 &1467835713105067326
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1408,6 +1419,7 @@ MonoBehaviour:
   dateText: {fileID: 6350020869574124123}
   toOffice: {fileID: 1795746862802707438}
   toLevel: {fileID: 1990288382386474861}
+  culpritDropdown: {fileID: 6171972705925269238}
 --- !u!1 &582236112909561761
 GameObject:
   m_ObjectHideFlags: 0
@@ -10099,7 +10111,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 10
   m_WholeNumbers: 1
-  m_Value: 10
+  m_Value: 6
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:

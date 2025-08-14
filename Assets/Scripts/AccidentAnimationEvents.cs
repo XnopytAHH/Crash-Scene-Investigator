@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class AccidentAnimationEvents : MonoBehaviour
 {
+    Animator animator;
     public void Impact()
     {
         // This method is called when the impact animation event is triggered.
@@ -16,7 +17,8 @@ public class AccidentAnimationEvents : MonoBehaviour
         // This method is called when the cutscene ends.
         // You can add code here to handle the end of the cutscene, such as enabling player controls or UI elements.
         Debug.Log("Cutscene ended.");
-        
+        animator = GetComponent<Animator>();
+        animator.enabled = false;
         GameManager.Instance.EndCutscene();
     }
 }

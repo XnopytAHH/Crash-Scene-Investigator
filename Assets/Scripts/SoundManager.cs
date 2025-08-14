@@ -31,6 +31,8 @@ public class SoundManager : MonoBehaviour
     /// </summary>
     [SerializeField]
     private AudioClip whooshSound;
+    [SerializeField]
+    private AudioClip endLevelSound;
     public void MenuButtonClicked()
     {
         audioSource.PlayOneShot(menuClickSound);
@@ -56,5 +58,10 @@ public class SoundManager : MonoBehaviour
     public void EnterLevelSound()
     {
         audioSource.PlayOneShot(whooshSound);
+    }
+    public void EndLevelSound()
+    {
+        audioSource.Stop(); // Stop any currently playing music
+        audioSource.PlayOneShot(endLevelSound);
     }
 }

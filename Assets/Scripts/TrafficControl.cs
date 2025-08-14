@@ -55,7 +55,7 @@ public class TrafficControl : MonoBehaviour
         }
         else if (startsOn == "EW")
         {
-
+            trafficLights = GameObject.FindGameObjectsWithTag("TrafficLight");
             foreach (GameObject light in trafficLights)
             {
                 if (light.GetComponent<TrafficLightBehaviour>() != null && light.GetComponent<TrafficLightBehaviour>().trafficLightDirection == "NS")

@@ -18,6 +18,7 @@ TagManager:
   - CutsceneCamera
   - Car
   - TrafficControl
+  - BusybodyNPC
   layers:
   - Default
   - TransparentFX

@@ -35,7 +35,7 @@ public class PlayerBehavior : MonoBehaviour
     /// <summary>
     /// currentCollectible is a reference to the current collectible item the player is looking at or interacting with in the game.
     /// </summary>
-    private GameObject currentCollectible; // Reference to the current collectible item the player is interacting with
+     GameObject currentCollectible; // Reference to the current collectible item the player is interacting with
     /// <summary>
     /// playerInventory is a reference to the player's inventory, which is used to manage collected items.
     /// </summary>
@@ -53,11 +53,13 @@ public class PlayerBehavior : MonoBehaviour
     /// hasFile is a boolean flag that indicates whether the player has a case file.
     /// </summary>
     public bool hasFile = false; // Flag to check if the player has a case file
-    
+    List<GameObject> talkedToNPCs;
+
     void Start()
     {
         playerInventory = new List<Evidence>();
         starterAssets = GetComponent<StarterAssetsInputs>(); // Get the StarterAssetsInputs component
+        talkedToNPCs = new List<GameObject>();
         caseFile.SetActive(false); // Ensure the case file is initially hidden
     }
 
@@ -82,11 +84,17 @@ public class PlayerBehavior : MonoBehaviour
             }
             else if (hitInfo.collider.CompareTag("Collectible"))
             {
+                Debug.Log("Collectible hit: " + hitInfo.collider.gameObject.name);
                 currentCollectible = hitInfo.collider.gameObject; // Set the current collectible to the hit object
                 currentCollectible.GetComponent<CollectibleBehavior>().Highlight(); // Highlight the collectible
                 canInteract = true; // Allow interaction with the collectible
             }
-            
+            else if (hitInfo.collider.CompareTag("BusybodyNPC"))
+            {
+
+                currentNPC = hitInfo.collider.gameObject; // Set the current NPC to the hit object
+                canInteract = true; // Allow interaction with the NPC
+            }
             else
             {
                 if (currentCollectible != null)
@@ -128,13 +136,24 @@ public class PlayerBehavior : MonoBehaviour
                         Debug.Log("Interacting with Background NPC: " + currentNPC.name);
                         StartCoroutine(currentNPC.GetComponent<PedestrianBehaviour>().ShowDialogue());
                     }
+                    else if (currentNPC.CompareTag("BusybodyNPC"))
+                    {
+                        // If the NPC is a busybody NPC, show dialogue
+                        Debug.Log("Interacting with Busybody NPC: " + currentNPC.name);
+                        BusyBodyBehaviour currentBusyBody = currentNPC.GetComponent<BusyBodyBehaviour>();
+                        if (currentBusyBody.heldEvidence != null)
+                        {
+                            // If the busybody NPC is holding evidence, drop it
+                            currentBusyBody.DropItem();
+                        }
+                    }
                     else
                     {
                         if (currentNPC.name == "Big Boss")
                         {
                             if (GameManager.Instance.CheckCompletion())
                             {
-                                GameManager.Instance.EndDay();
+                                StartCoroutine(GameManager.Instance.EndDay());
 
                             }
                         }
@@ -143,7 +162,11 @@ public class PlayerBehavior : MonoBehaviour
                             // If the NPC is an interactive NPC, start dialogue
                             Debug.Log("Interacting with NPC: " + currentNPC.name);
                             EvidenceCamera captureCamera = GameObject.FindWithTag("MainCamera").GetComponent<EvidenceCamera>(); // Find the EvidenceCamera in the scene
-                            modifyInventory(true, currentNPC.name+"'s testimony", currentNPC.GetComponent<NPCBehavior>().description, captureCamera.CaptureView()); // Add the collectible to the player's inventory
+                            if (!talkedToNPCs.Contains(currentNPC))
+                            {
+                                talkedToNPCs.Add(currentNPC);
+                                modifyInventory(true, currentNPC.name + "'s testimony", currentNPC.GetComponent<NPCBehavior>().description, captureCamera.CaptureView()); // Add the collectible to the player's inventory
+                            }
                             Dialogue currentDialogueLines = currentNPC.GetComponent<NPCBehavior>().getNPCLines(GameManager.Instance.currentLevel); // Get the dialogue lines for the current NPC
                             isBusy = true; // Set the player as busy to prevent further interactions
                             StartCoroutine(GameManager.Instance.NPCDialogue(currentNPC, currentDialogueLines));

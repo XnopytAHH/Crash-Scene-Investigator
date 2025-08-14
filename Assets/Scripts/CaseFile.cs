@@ -27,6 +27,10 @@ public class CaseFile : MonoBehaviour
     /// </summary>
     [SerializeField] private Button toLevel;
     /// <summary>
+    /// culpritDropdown is a reference to the TMP_Dropdown component that displays the list of culprits.
+    /// </summary>
+    [SerializeField] private TMP_Dropdown culpritDropdown;
+    /// <summary>
     /// AddEvidence is a method that adds evidence to the case file.
     /// </summary>
     public void AddEvidence(Evidence evidence)
@@ -62,11 +66,16 @@ public class CaseFile : MonoBehaviour
         }
         Debug.Log("All evidence cleared from the case file.");
     }
-    public void UpdateDetails(string title, string date)
+    public void UpdateDetails(string title, string date, string culprit1, string culprit2)
     {
         ClearEvidence(); // Clear existing evidence
         fileTitle.text = title; // Update the case file title
         dateText.text = date; // Update the case file date
+        culpritDropdown.options.Clear();
+        culpritDropdown.options.Add(new TMP_Dropdown.OptionData("Select Culprit")); // Add a default option
+        culpritDropdown.options.Add(new TMP_Dropdown.OptionData(culprit1));
+        culpritDropdown.options.Add(new TMP_Dropdown.OptionData(culprit2));
+        culpritDropdown.value = 0; // Set the default selected option
         Debug.Log("Case file details updated.");
 
     }

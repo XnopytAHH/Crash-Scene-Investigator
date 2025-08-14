@@ -1,0 +1,127 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &1414011456517018625
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.467
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.896646
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.406
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.005593656
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.0012042222
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.9775879
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.21044989
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 24.296
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 179.281
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -0.296
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+      propertyPath: m_Name
+      value: phone
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+      propertyPath: m_TagString
+      value: Collectible
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2829972914655460256}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5210651886427961503}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 376872409346989705}
+  m_SourcePrefab: {fileID: 100100000, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+--- !u!1 &2260519200370633040 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 8f2b71981ba92fd498519f24c60efac2, type: 3}
+  m_PrefabInstance: {fileID: 1414011456517018625}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2829972914655460256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2260519200370633040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03c8965e60818e24588741a11fd540ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5210651886427961503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2260519200370633040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d0e25f482f165c43aa88ec3fd5e1b4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collectibleAudioClip: {fileID: 8300000, guid: 141bb2449e4634a4bb74117662ba52e1, type: 3}
+  collectibleName: Phone
+  collectibleDesc: A phone the pedestrian was holding. Its playing a video
+  destroyOnPickup: 1
+--- !u!114 &376872409346989705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2260519200370633040}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 3.45
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []

@@ -348,6 +348,7 @@ public class GameManager : MonoBehaviour
     }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        
         endScreen.enabled = false; // Enable the end screen UI
         crosshair.enabled = true; // Enable the crosshair in the office scene
         timerUI.enabled = false; // Disable the timer UI at the start
@@ -364,6 +365,12 @@ public class GameManager : MonoBehaviour
         //loop through all toggles and set them to false
         if (SceneManager.GetActiveScene().name == "Tutorial")
         {
+            if (volumeProfile.TryGet(out Vignette vignetteEffect) && volumeProfile.TryGet(out LensDistortion lensDistortionEffect))
+            {
+                vignetteEffect.color.value = indicatorBlue; // Set the initial vignette color to green
+                vignetteEffect.intensity.value = 0f; // Set the vignette intensity to a default value
+                lensDistortionEffect.intensity.value = 0f; // Set the lens distortion intensity to a default value
+            }
             soundManager.OfficeMusic();
             backgroundAnimator.Play("Closed", 0, 0f); // Play the fade-in animation immediately
             backgroundAnimator.SetBool("isOpen", true); // Ensure the background is closed at the start
@@ -410,7 +417,7 @@ public class GameManager : MonoBehaviour
                     caseFileObject.SetActive(false); // Hide the case file object when transitioning to a new scene
                 }
                 backgroundAnimator.Play("open", 0, 0f); // Play the fade-in animation immediately
-
+                backgroundAnimator.SetBool("isOpen", true); // Ensure the background is open at the start
                 Debug.Log("Not starting a new day, background animator is set to open");
                 StartCoroutine(transitionToNewScene()); // Transition to the new scene if not starting a new day
 
@@ -418,7 +425,12 @@ public class GameManager : MonoBehaviour
         }
         else if (SceneManager.GetActiveScene().name == "MainMenu")
         {
-
+            if (volumeProfile.TryGet(out Vignette vignetteEffect) && volumeProfile.TryGet(out LensDistortion lensDistortionEffect))
+            {
+                vignetteEffect.color.value = indicatorBlue; // Set the initial vignette color to green
+                vignetteEffect.intensity.value = 0f; // Set the vignette intensity to a default value
+                lensDistortionEffect.intensity.value = 0f; // Set the lens distortion intensity to a default value
+            }
             
             Toggle[] toggles = GameObject.FindObjectsByType<Toggle>(FindObjectsSortMode.None);
             foreach (Toggle toggle in toggles)
@@ -671,7 +683,7 @@ public class GameManager : MonoBehaviour
         player.GetComponent<PlayerBehavior>().isBusy = true; // Set the player as busy while starting the day
         player.GetComponent<PlayerBehavior>().hasFile = false; // Reset the case file flag
         dayCounter.CrossFadeAlpha(0.0f, 0f, true); // Fade in the day counter
-
+        Time.timeScale = 1; // Ensure the game is running at normal speed
         dayCounter.CrossFadeAlpha(1.0f, 1f, true); // Fade in the day counter
         yield return new WaitForSeconds(2f); // Wait for 2 seconds before fading out
         dayCounter.CrossFadeAlpha(0.0f, 1f, true); // Fade out the day counter
@@ -701,8 +713,8 @@ public class GameManager : MonoBehaviour
         StartCoroutine(NPCDialogue(bigBoss.gameObject, currentDialogueLines)); // Start the dialogue coroutine with the big boss NPC
         yield return new WaitUntil(() => !player.GetComponent<PlayerBehavior>().isBusy); // Wait for the end of the frame to ensure everything is set up correctly
         startingNewDay = false; // Reset the flag after starting the day
-
-        caseFile.UpdateDetails("Case File " + currentLevel + " - " + levelManager.levelName[currentLevel], levelManager.levelDate[currentLevel]); // Update the case file details with the current day and date
+        isPaused = false; // Set the paused state to false when starting a new day
+        caseFile.UpdateDetails("Case File " + currentLevel + " - " + levelManager.levelName[currentLevel], levelManager.levelDate[currentLevel], levelManager.Culprit1[currentLevel], levelManager.Culprit2[currentLevel]); // Update the case file details with the current day and date
 
         caseFileObject.SetActive(true); // Show the case file object after starting the day
     }
@@ -750,9 +762,9 @@ public class GameManager : MonoBehaviour
     private IEnumerator LevelCutscene()
     {
         inCutscene = true; // Set the cutscene state to true
-        
-        GameObject.Find("AccidentElements").GetComponent<Animator>().Play("Level1Accident", 0, 0f); // Play the accident cutscene animation
-        
+
+        GameObject.Find("AccidentElements").GetComponent<Animator>().Play(("Level" + currentLevel + "Accident"), 0, 0f); // Play the accident cutscene animation
+
         Time.timeScale = 1f; // Resume the game after the cutscene starts
         while (inCutscene)
         {
@@ -939,9 +951,26 @@ public class GameManager : MonoBehaviour
             return false; // Return false if no cause is selected
         }
     }
-    public void EndDay()
+    public IEnumerator EndDay()
     {
+        
+        backgroundAnimator.Play("open", 0, 0f); // Play the fade-in animation immediately
+        backgroundAnimator.SetBool("isOpen", false); // Close the background UI
+        player.GetComponent<FirstPersonController>().enabled = false; // Disable the character controller to prevent movement
+        yield return new WaitForSeconds(3f); // Wait for 1 second before continuing
+        culpritUI.text = "";
+        culpritScoreUI.text = "";
+        causeUI.text = "";
+        causeScoreUI.text = "";
+        cluesUI.text = "";
+        cluesScoreUI.text = "";
+        timerUI.text = "";
+        timerendUI.text = "";
+        timerendScoreUI.text = "";
+        totalscoreUI.text = "";
         endScreen.enabled = true; // Enable the end screen UI
+        rankIcon.enabled = false;
+        bossIcon.enabled = false;
         int totalScore = 0;
         int cluesFound = GameObject.Find("EvidenceCanvas").transform.childCount; // Count the number of clues found
         float timeRemaining = MathF.Ceiling(timer);
@@ -965,44 +994,58 @@ public class GameManager : MonoBehaviour
         caseNameUI.text = "Case File " + currentLevel + " - " + levelManager.levelName[currentLevel]; // Update the case name UI text
         if (correctCulprit)
         {
-            correctText.text = "Solved!";
+            yield return stepThru(correctText, 0.05f, "Solved!");
         }
         else
         {
-            correctText.text = "Unsolved";
-        }
-        if (correctCause)
-        {
-            causeUI.text = "Cause of accident identified:";
-            causeScoreUI.text = 1000 + " points";
-            totalScore += 1000; // Add the score for the cause of accident
-        }
-        else
-        {
-            causeUI.text = "Cause of accident incorrect.";
-            causeScoreUI.text = 0 + " points";
+            yield return stepThru(correctText, 0.05f, "Unsolved");
         }
         if (correctCulprit)
         {
-            culpritUI.text = "Culprit identified:";
+            yield return StartCoroutine(stepThru(culpritUI, 0.05f, "Culprit identified:"));
+            yield return new WaitForSeconds(0.3f);
             culpritScoreUI.text = 500 + " points";
+            yield return new WaitForSeconds(0.3f);
             totalScore += 500; // Add the score for the culprit
         }
         else
         {
-            culpritUI.text = "Culprit not identified.";
+            yield return stepThru(culpritUI, 0.05f, "Culprit not identified.");
+            yield return new WaitForSeconds(0.3f);
             culpritScoreUI.text = 0 + " points";
+            yield return new WaitForSeconds(0.3f);
+        }
+        if (correctCause)
+        {
+            yield return StartCoroutine(stepThru(causeUI, 0.05f, "Cause of accident identified:"));
+            yield return new WaitForSeconds(0.3f);
+            causeScoreUI.text = 1000 + " points";
+            yield return new WaitForSeconds(0.3f);
+            totalScore += 1000; // Add the score for the cause of accident
+        }
+        else
+        {
+            yield return StartCoroutine(stepThru(causeUI, 0.05f, "Cause of accident incorrect."));
+            yield return new WaitForSeconds(0.3f);
+            causeScoreUI.text = 0 + " points";
+            yield return new WaitForSeconds(0.3f);
         }
 
-        cluesUI.text = "Clues collected: " + cluesFound + "/" + levelManager.clueNumber[currentLevel]; // Update the clues UI text
+
+        yield return StartCoroutine(stepThru(cluesUI, 0.05f, "Clues collected: " + cluesFound + "/" + levelManager.clueNumber[currentLevel])); // Update the clues UI text
+        yield return new WaitForSeconds(0.3f);
         cluesScoreUI.text = "100 x " + cluesFound + " points"; // Update the clues score UI text
+        yield return new WaitForSeconds(0.3f);
         totalScore += cluesFound * 100; // Add the score for the clues collected
-        timerendUI.text = "Time remaining: " + timeRemaining + " seconds"; // Update the timer UI text
-        timerendScoreUI.text = timeRemaining * 10 + " points"; // Update the timer score UI text
+        yield return StartCoroutine(stepThru(timerendUI, 0.05f, "Time remaining: " + Mathf.Floor(timeRemaining / 60) + ":" + Mathf.Floor(timeRemaining % 60))); // Update the timer UI text
+        yield return new WaitForSeconds(0.3f);
+        timerendScoreUI.text = "Score: " + (int)(timeRemaining * 10) + " points"; // Update the timer score UI text
         totalScore += (int)(timeRemaining * 10); // Add the score for the time remaining
-
-        totalscoreUI.text = totalScore + " points"; // Update the total score UI text
-
+        yield return new WaitForSeconds(0.3f);
+        StartCoroutine(stepThru(totalscoreUI, 0.05f, totalScore + " points")); // Update the total score UI text
+        yield return new WaitForSeconds(1f);
+        rankIcon.enabled = true;
+        bossIcon.enabled = true;
         //Determine rank
         if (!correctCause && !correctCulprit)
         {
@@ -1028,6 +1071,28 @@ public class GameManager : MonoBehaviour
         {
             rankIcon.sprite = rankSprites[4]; // Set the rank icon to "S"
             bossIcon.sprite = bossSprites[4]; // Set the boss icon to the fifth boss sprite
+        }
+        soundManager.EndLevelSound(); // Play the sound effect for ending the level
+        Cursor.lockState = CursorLockMode.None; // Unlock the cursor when the end screen is displayed
+        yield return null; // Wait for the end of the frame to ensure everything is set up correctly
+    }
+    private IEnumerator stepThru(TextMeshProUGUI textbox, float delay, string line)
+    {
+        textbox.text = ""; // Clear the textbox before starting
+        foreach (char letter in line.ToCharArray())
+        {
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+            {
+                textbox.text = line; // If space is pressed, show the full text immediately
+                Debug.Log("Dialogue skipped");
+                yield return new WaitForEndOfFrame(); // Wait for the end of the frame to ensure the text is fully displayed
+                yield break; // Exit the coroutine
+
+            }
+
+            textbox.text += letter; // Add one letter at a time
+
+            yield return new WaitForSeconds(delay); // Wait for the specified delay
         }
     }
     public void NextLevel()

@@ -7,18 +7,21 @@ using UnityEngine;
 
 public class CollectibleBehavior : MonoBehaviour
 {
-    
+
     /// <summary>
     /// The MeshRenderer component for the collectible object.
     /// Used to change the color when highlighted or collected.
     /// </summary>
-    
-    
-    
+
+    public Vector3 originalPos;
+
     /// <summary>
     /// Highlights the collectible by changing its color.
     /// </summary>
-
+    void Start()
+    {
+        originalPos = transform.position;
+    }
     public void Highlight()
     {
         gameObject.GetComponent<Outline>().enabled = true; // Enable the outline component
