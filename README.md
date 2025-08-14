@@ -20,15 +20,16 @@ Hardware Specifications: FHD display (1920x1080)<br/>
 - Currently only 2 playable levels
 
 ## Finite State Machines
-![Pedestrian FSM](FSM1.png)
 ### Pedestrian FSM
-The pedestrian FSM makes use of the NavMesh Agent component to navigate throughout the scene, following the Humanoid Navmesh and navigates only on sidewalks and crossings. It is put forcibly into Idle when waiting at traffic lights and talks to the player when interacted with
-![Car FSM](FSM2.png)
+The pedestrian FSM makes use of the NavMesh Agent component to navigate throughout the scene, following the Humanoid Navmesh and navigates only on sidewalks and crossings. It is put forcibly into Idle when waiting at traffic lights and talks to the player when interacted with<br/>
+![Pedestrian FSM](FSM1.png)
 ### Car FSM
-The Car FSM makes use of the NavMesh Agent component to navigate throughout the scene, following the Car Navmesh and navigates only on roads. It is put forcibly into Idle when waiting at traffic lights and stops to honk at player
-![Busybody FSM](FSM3.png)
+The Car FSM makes use of the NavMesh Agent component to navigate throughout the scene, following the Car Navmesh and navigates only on roads. It is put forcibly into Idle when waiting at traffic lights and stops to honk at player<br/>
+![Car FSM](FSM2.png)
 ### Busybody FSM
-The busybody NPC is the only enemy of the game, he acts the same as the pedestrian, but after a while will transition to blocking the player from picking up evidence. After a while more, he picks up the evidence himself and will go back to walking, and the player must retrieve it from the busybody.
+The busybody NPC is the only enemy of the game, he acts the same as the pedestrian, but after a while will transition to blocking the player from picking up evidence. After a while more, he picks up the evidence himself and will go back to walking, and the player must retrieve it from the busybody.<br/>
+![Busybody FSM](FSM3.png)
+
 
 ## External References
 ### Models
