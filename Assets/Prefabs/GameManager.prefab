@@ -159,7 +159,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6559874562584323590}
-  - component: {fileID: 112794837465549125}
+  - component: {fileID: 9020345827376960125}
   m_Layer: 0
   m_Name: LevelManager
   m_TagString: Untagged
@@ -182,7 +182,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2281943588311178052}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &112794837465549125
+--- !u!114 &9020345827376960125
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -198,32 +198,24 @@ MonoBehaviour:
   - 
   - Crash at Clementi Road
   - Crash at Bukit Timah Road
-  - Crash at Orchard Road
-  - Crash at East Coast Parkway
   levelDate:
   - 
   - 'Date: 20XX/10/01, 08:02hrs'
   - 'Date: 20XX/10/02, 14:18hrs'
-  - 'Date: 20XX/10/03, 09:32hrs'
-  - 'Date: 20XX/10/04, 16:48hrs'
-  culpritList: 0000000001000000020000000200000002000000
+  culpritList: 000000000100000002000000
   causeList:
   - what
   - Crossing unfocused
-  - Amber Light
   - Red Light
-  - DUI
-  clueNumber: 0000000003000000040000000300000003000000
+  clueNumber: 000000000300000003000000
   Culprit1:
+  - 
   - Pedestrian
   - Green Car
-  - Michael Johnson
-  - Emily Davis
   Culprit2:
+  - 
   - Driver
   - Purple Car
-  - Charlie Green
-  - David Black
 --- !u!1 &106362421007714211
 GameObject:
   m_ObjectHideFlags: 0
@@ -968,7 +960,7 @@ MonoBehaviour:
   levelMusic: {fileID: 8300000, guid: c603fb1a3e066f242a9a7873774b8294, type: 3}
   officeMusic: {fileID: 8300000, guid: afd6dcb0c37798142bb13d4a2cedb353, type: 3}
   whooshSound: {fileID: 8300000, guid: b8371f66267e3244998abff53db11b39, type: 3}
-  endLevelSound: {fileID: 0}
+  endLevelSound: {fileID: 8300000, guid: e2835a310b1c6054c9c5c38703ecc30c, type: 3}
 --- !u!82 &1467835713105067326
 AudioSource:
   m_ObjectHideFlags: 0
@@ -8005,7 +7997,7 @@ MonoBehaviour:
   player: {fileID: 0}
   isPaused: 0
   backgroundUI: {fileID: 0}
-  levelManager: {fileID: 112794837465549125}
+  levelManager: {fileID: 0}
   caseFile: {fileID: 1162204159116362284}
   caseFileObject: {fileID: 0}
   timerUI: {fileID: 3820854255605079645}

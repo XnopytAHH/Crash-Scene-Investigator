@@ -381,11 +381,36 @@ public class GameManager : MonoBehaviour
             StartCoroutine(StartTutorial()); // Start the tutorial coroutine
         }
 
-
+        else if (SceneManager.GetActiveScene().name == "Intro")
+        {
+            soundManager.StopMusic();
+            Time.timeScale = 1; // Ensure the game is running at normal speed
+            if (volumeProfile.TryGet(out Vignette vignetteEffect) && volumeProfile.TryGet(out LensDistortion lensDistortionEffect))
+            {
+                vignetteEffect.color.value = indicatorBlue; // Set the initial vignette color to green
+                vignetteEffect.intensity.value = 0f; // Set the vignette intensity to a default value
+                lensDistortionEffect.intensity.value = 0f; // Set the lens distortion intensity to a default value
+            }
+            backgroundAnimator.Play("Closed", 0, 0f); // Play the fade-in animation immediately
+            backgroundAnimator.SetBool("isOpen", true); // Ensure the background is closed at the start
+            crosshair.enabled = false; // Disable the crosshair in the intro scene
+        }
+        else if (SceneManager.GetActiveScene().name == "Outro")
+        {
+            if (volumeProfile.TryGet(out Vignette vignetteEffect) && volumeProfile.TryGet(out LensDistortion lensDistortionEffect))
+            {
+                vignetteEffect.color.value = indicatorBlue; // Set the initial vignette color to green
+                vignetteEffect.intensity.value = 0f; // Set the vignette intensity to a default value
+                lensDistortionEffect.intensity.value = 0f; // Set the lens distortion intensity to a default value
+            }
+            backgroundAnimator.Play("Closed", 0, 0f); // Play the fade-in animation immediately
+            backgroundAnimator.SetBool("isOpen", true); // Ensure the background is closed at the start
+            Debug.Log("Starting outro scene, background animator is set to closed");
+        }
         else if (SceneManager.GetActiveScene().name == "office")
         {
             caseFileObject = FindObjectsByType<CollectibleBehavior>(FindObjectsInactive.Include, FindObjectsSortMode.None)[0].gameObject; // Find the case file collectible object in the office scene
-             soundManager.OfficeMusic();
+            soundManager.OfficeMusic();
 
             if (caseFileObject != null)
             {
@@ -403,6 +428,10 @@ public class GameManager : MonoBehaviour
 
             if (startingNewDay)
             {
+                if (levelManager.levelName[currentLevel] == null)
+                {
+                    SceneManager.LoadScene("Outro"); // Load the main menu if the level name is null
+                }
                 backgroundAnimator.Play("Closed", 0, 0f); // Play the fade-in animation immediately
                 backgroundAnimator.SetBool("isOpen", false); // Ensure the background is closed at the start
                 StartCoroutine(StartDayCoroutine()); // Start the day if a new day is starting
@@ -431,7 +460,7 @@ public class GameManager : MonoBehaviour
                 vignetteEffect.intensity.value = 0f; // Set the vignette intensity to a default value
                 lensDistortionEffect.intensity.value = 0f; // Set the lens distortion intensity to a default value
             }
-            
+
             Toggle[] toggles = GameObject.FindObjectsByType<Toggle>(FindObjectsSortMode.None);
             foreach (Toggle toggle in toggles)
             {
@@ -543,7 +572,7 @@ public class GameManager : MonoBehaviour
         startingNewDay = true; // Set the flag to indicate a new day is starting
         Cursor.lockState = CursorLockMode.Locked; // Lock the cursor at the start
         Debug.Log("Starting new day: " + currentLevel);
-        SceneManager.LoadScene("Tutorial");
+        SceneManager.LoadScene("Intro");
     }
     IEnumerator StartGameCoroutine()
     {

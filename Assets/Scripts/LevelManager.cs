@@ -10,9 +10,7 @@ public class LevelManager : MonoBehaviour
     {
         "",
         "Crash at Clementi Road",
-        "Crash at Bukit Timah Road",
-        "Crash at Orchard Road",
-        "Crash at East Coast Parkway"
+        "Crash at Bukit Timah Road"
     };
     /// <summary>
     /// levelDate is a list containing the dates associated with each level.
@@ -21,31 +19,23 @@ public class LevelManager : MonoBehaviour
     {
        "",
         "Date: 20XX/10/01, 08:02hrs",
-        "Date: 20XX/10/02, 14:18hrs",
-        "Date: 20XX/10/03, 09:32hrs",
-        "Date: 20XX/10/04, 16:48hrs"
+        "Date: 20XX/10/02, 14:18hrs"
     };
     public int[] culpritList = new int[]
     {
         0,
         1,
         2,
-        2,
-        2
     };
     public String[] causeList = new String[]
     {
         "what",
         "Crossing unfocused",
-        "Red Light",
-        "Red Light",
-        "DUI"
+        "Red Light"
     };
     public int[] clueNumber = new int[]
     {
         0,
-        3,
-        3,
         3,
         3
     };
@@ -54,17 +44,13 @@ public class LevelManager : MonoBehaviour
     {
         "",
         "Pedestrian",
-        "Green Car",
-        "Michael Johnson",
-        "Emily Davis"
+        "Green Car"
     };
     public string[] Culprit2 = new string[]
     {
         "",
         "Driver",
-        "Purple Car",
-        "Charlie Green",
-        "David Black"
+        "Purple Car"
     };
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

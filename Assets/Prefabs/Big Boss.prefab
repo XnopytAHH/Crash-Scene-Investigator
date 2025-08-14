@@ -154,19 +154,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 299c6f5548bd0524098022fc0cdabc0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogueIndex: 0
   dialogueLines:
   - dialogueLevel: 0
     dialogueLines:
     - AudioClip: {fileID: 8300000, guid: 1fca5854c101aee48bbc62b980347fe1, type: 3}
       Line: Hi I is death, i am death and my name is death, i am the actual death
         and the one and only death
+      lineImage: {fileID: 0}
     - AudioClip: {fileID: 8300000, guid: 1fca5854c101aee48bbc62b980347fe1, type: 3}
       Line: This text line needs to be replaced
+      lineImage: {fileID: 0}
     - AudioClip: {fileID: 8300000, guid: 1fca5854c101aee48bbc62b980347fe1, type: 3}
       Line: What day is it
+      lineImage: {fileID: 0}
     - AudioClip: {fileID: 8300000, guid: 1fca5854c101aee48bbc62b980347fe1, type: 3}
       Line: Does my voice sound ok
+      lineImage: {fileID: 0}
+  description: 
 --- !u!95 &6299280786217866276
 Animator:
   serializedVersion: 7
@@ -379,7 +383,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 500b679015c2533428f392bc1fbc4972, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 479799d6feae2fa4d83828f9884d78ee, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

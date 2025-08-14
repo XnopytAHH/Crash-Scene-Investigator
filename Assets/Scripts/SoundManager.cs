@@ -64,4 +64,8 @@ public class SoundManager : MonoBehaviour
         audioSource.Stop(); // Stop any currently playing music
         audioSource.PlayOneShot(endLevelSound);
     }
+    public void StopMusic()
+    {
+        audioSource.Stop(); // Stop any currently playing music
+    }
 }
