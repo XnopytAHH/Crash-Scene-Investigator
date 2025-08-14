@@ -268,6 +268,12 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     GameObject optionsMenu;
     /// <summary>
+    /// EndingScreen is a reference to the ending screen GameObject.
+    /// </summary>
+    [SerializeField]
+    Canvas endingScreen;
+
+    /// <summary>
     /// Start is called before the first frame update
     /// </summary>
     void Start()
@@ -348,7 +354,7 @@ public class GameManager : MonoBehaviour
     }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        
+        endingScreen.enabled = false; // Disable the ending screen at the start
         endScreen.enabled = false; // Enable the end screen UI
         crosshair.enabled = true; // Enable the crosshair in the office scene
         timerUI.enabled = false; // Disable the timer UI at the start
@@ -397,6 +403,7 @@ public class GameManager : MonoBehaviour
         }
         else if (SceneManager.GetActiveScene().name == "Outro")
         {
+            endingScreen.enabled = true; // Enable the ending screen
             if (volumeProfile.TryGet(out Vignette vignetteEffect) && volumeProfile.TryGet(out LensDistortion lensDistortionEffect))
             {
                 vignetteEffect.color.value = indicatorBlue; // Set the initial vignette color to green
@@ -428,7 +435,7 @@ public class GameManager : MonoBehaviour
 
             if (startingNewDay)
             {
-                if (levelManager.levelName[currentLevel] == null)
+                if (currentLevel==3)
                 {
                     SceneManager.LoadScene("Outro"); // Load the main menu if the level name is null
                 }
@@ -743,7 +750,8 @@ public class GameManager : MonoBehaviour
         yield return new WaitUntil(() => !player.GetComponent<PlayerBehavior>().isBusy); // Wait for the end of the frame to ensure everything is set up correctly
         startingNewDay = false; // Reset the flag after starting the day
         isPaused = false; // Set the paused state to false when starting a new day
-        caseFile.UpdateDetails("Case File " + currentLevel + " - " + levelManager.levelName[currentLevel], levelManager.levelDate[currentLevel], levelManager.Culprit1[currentLevel], levelManager.Culprit2[currentLevel]); // Update the case file details with the current day and date
+        levelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>(); // Find the LevelManager script
+        caseFile.UpdateDetails("Case File " + currentLevel + " - " + levelManager.levelName[currentLevel], levelManager.levelDate[currentLevel], levelManager.Culprit1[currentLevel], levelManager.Culprit2[currentLevel], levelManager.accidentPhoto[currentLevel]); // Update the case file details with the current day and date
 
         caseFileObject.SetActive(true); // Show the case file object after starting the day
     }

@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.AI;
-
+using UnityEngine.VFX;
 
 public class BusyBodyBehaviour : MonoBehaviour
 {
@@ -22,6 +22,7 @@ public class BusyBodyBehaviour : MonoBehaviour
     [SerializeField] Transform holdPosition = null;
 
     Coroutine stateRoutine;
+    [SerializeField] VisualEffect evidenceEffect;
 
     void Awake()
     {
@@ -162,7 +163,7 @@ public class BusyBodyBehaviour : MonoBehaviour
                 targetEvidence.GetComponent<Outline>().OutlineColor= Color.red;
                 targetEvidence.transform.position = holdPosition.position;
                 targetEvidence.transform.SetParent(holdPosition);
-
+                evidenceEffect.Play();
                 ChangeState("Idle");
             }
 

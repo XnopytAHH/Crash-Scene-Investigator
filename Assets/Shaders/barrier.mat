@@ -44,7 +44,7 @@ Material:
     m_Floats:
     - _Distance: 0
     - _MaxAlpha: 0.2
-    - _PlayerDistance: 3.3312187
+    - _PlayerDistance: 31.431679
     - _QueueControl: 0
     - _QueueOffset: 0
     - _RevealRadius: 3

@@ -31,6 +31,10 @@ public class CaseFile : MonoBehaviour
     /// </summary>
     [SerializeField] private TMP_Dropdown culpritDropdown;
     /// <summary>
+    /// accidentPhoto is a reference to the Image that displays the accident photo.
+    /// </summary>
+    [SerializeField] private Image accidentPhoto;
+    /// <summary>
     /// AddEvidence is a method that adds evidence to the case file.
     /// </summary>
     public void AddEvidence(Evidence evidence)
@@ -66,7 +70,7 @@ public class CaseFile : MonoBehaviour
         }
         Debug.Log("All evidence cleared from the case file.");
     }
-    public void UpdateDetails(string title, string date, string culprit1, string culprit2)
+    public void UpdateDetails(string title, string date, string culprit1, string culprit2, Sprite accidentPhoto)
     {
         ClearEvidence(); // Clear existing evidence
         fileTitle.text = title; // Update the case file title

@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
+    
     /// <summary>
     /// levelName is a list containing the names of the levels in the game.
     /// </summary>
@@ -52,6 +53,7 @@ public class LevelManager : MonoBehaviour
         "Driver",
         "Purple Car"
     };
+    public Sprite[] accidentPhoto;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
