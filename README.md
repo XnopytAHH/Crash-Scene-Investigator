@@ -37,6 +37,7 @@ Trees: [Stylized Tree & Grass Samples(Symphonie Studio): Unity Assets Store](htt
 ### Textures
 Stylized Nature Textures: [Stylized Nature Textures(Yoge): Unity Assets Store](https://assetstore.unity.com/packages/2d/textures-materials/stylized-nature-textures-228680)<br/>
 Wallpaper Texture: [wallpaper 1 (Ana Vien): Substance 3D Community Assets](https://substance3d.adobe.com/community-assets/assets/9793ec96bde9f31b14035ee9cef9a9ea5b3e09c9)
+<br/>
 Floor Texture: [Parquet Floor (Viktor TOUNISSOUX): Substance 3D Community Assets](https://substance3d.adobe.com/community-assets/assets/29be1a1e0a3945980acf40464c5a31f5eb933cd0)
 ### Code
 Player Controller: [Starter Assets : Unity Assets Store](https://assetstore.unity.com/packages/essentials/starter-assets-character-controllers-urp-267961?srsltid=AfmBOopwNbftk8lbgmCCX9WvvS_A8_Uv_wj1qGvzOyF7IJB54vSBqTKp)<br/>
