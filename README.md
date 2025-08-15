@@ -36,11 +36,21 @@ The busybody NPC is the only enemy of the game, he acts the same as the pedestri
 Trees: [Stylized Tree & Grass Samples(Symphonie Studio): Unity Assets Store](https://assetstore.unity.com/packages/3d/vegetation/trees/stylized-tree-grass-samples-304714)<br/>
 ### Textures
 Stylized Nature Textures: [Stylized Nature Textures(Yoge): Unity Assets Store](https://assetstore.unity.com/packages/2d/textures-materials/stylized-nature-textures-228680)<br/>
+Wallpaper Texture: [wallpaper 1 (Ana Vien): Substance 3D Community Assets](https://substance3d.adobe.com/community-assets/assets/9793ec96bde9f31b14035ee9cef9a9ea5b3e09c9)
+Floor Texture: [Parquet Floor (Viktor TOUNISSOUX): Substance 3D Community Assets](https://substance3d.adobe.com/community-assets/assets/29be1a1e0a3945980acf40464c5a31f5eb933cd0)
 ### Code
 Player Controller: [Starter Assets : Unity Assets Store](https://assetstore.unity.com/packages/essentials/starter-assets-character-controllers-urp-267961?srsltid=AfmBOopwNbftk8lbgmCCX9WvvS_A8_Uv_wj1qGvzOyF7IJB54vSBqTKp)<br/>
 Item Outlines: [Quick Outlines (Chris Nolet): Unity Assets Store](https://assetstore.unity.com/packages/tools/particles-effects/quick-outline-115488?aid=1101l9Bhe )<br/>
 ### Sounds
+Car Horn 1: [automobile horn 2](https://pixabay.com/sound-effects/automobile-horn-2-352065/)<br/>
+Car Horn 2: [beep beep](https://pixabay.com/sound-effects/beep-beep-101391/)<br/>
+Cricket Ambiance: [cricket on a summer night](https://pixabay.com/sound-effects/cricket-on-a-summer-night-cricket-sound-341501/)<br/>
+Menu Music: [Game music loop 6](https://pixabay.com/sound-effects/game-music-loop-6-144641/)<br/>
+Level Music: [Game music loop 8](https://pixabay.com/music/video-games-game-music-loop-8-145362/)<br/>
 Collecting Objectives: [Item pickup](https://pixabay.com/sound-effects/item-pickup-37089/)<br/>
+Office music: [Bossa Nova cooking show music](https://pixabay.com/music/bossa-nova-jazz-bossa-nova-cooking-show-music-312826/)<br/>
+Menu click sound: [Menu Selection](https://pixabay.com/sound-effects/menu-selection-102220/)<br/>
+Whoosh sound: [Whoosh truck 2](https://pixabay.com/sound-effects/whoosh-truck-2-386138/)<br/>
 Player Win Sound: [You win sequence 1](https://pixabay.com/sound-effects/you-win-sequence-1-183948/)<br/>
 
 ## Game flow/Tutorial
