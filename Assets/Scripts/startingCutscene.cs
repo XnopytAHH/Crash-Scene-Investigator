@@ -1,32 +1,56 @@
+/*
+* Author: Lim En Xu Jayson
+* Date: 16/8/2025
+* Description: Starts the main menu cutscene.
+*/
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 public class startingCutscene : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    /// <summary>
+    /// Reference to the player's car GameObject.
+    /// </summary>
     private GameObject myCar;
+    /// <summary>
+    /// Reference to the company logo GameObject.
+    /// </summary>
     [SerializeField]
     private GameObject companyLogo;
+    /// <summary>
+    /// Duration of the fade in/out effect for the logo.
+    /// </summary>
     [SerializeField]
     private float fadeDuration = 1f;
+    /// <summary>
+    /// Duration for which the logo is displayed.
+    /// </summary>
     [SerializeField]
     private float logoDisplayDuration = 2f;
+    /// <summary>
+    /// Reference to the background animator.
+    /// </summary>
     private Animator backgroundAnimator;
+    /// <summary>
+    /// Reference to the menu animator.
+    /// </summary>
     private Animator menuAnimator;
+    /// <summary>
+    /// Reference to the sound manager.
+    /// </summary>
     private SoundManager soundManager;
-
+    /// <summary>
+    /// initialize at the start of the scene
+    /// </summary>
     void Start()
     {
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
         StartCoroutine(StartIntro());
     }
 
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    /// <summary>
+    /// Shows the company logo with a fade in/out effect.
+    /// </summary>
     private IEnumerator ShowCompanyLogo()
     {
         yield return new WaitForSeconds(1f); // Wait for 2 seconds before showing the logo
@@ -35,6 +59,9 @@ public class startingCutscene : MonoBehaviour
         companyLogo.GetComponent<Image>().CrossFadeAlpha(0.0f, fadeDuration, true);
         yield return new WaitForSeconds(fadeDuration); // Wait for the fade out to complete
     }
+    /// <summary>
+    /// Starts the intro sequence.
+    /// </summary>
     private IEnumerator StartIntro()
     {
         Cursor.lockState = CursorLockMode.Locked; // Unlock the cursor at the start
@@ -46,15 +73,16 @@ public class startingCutscene : MonoBehaviour
         companyLogo.GetComponent<Image>().CrossFadeAlpha(0.0f, 0f, false);
         menuAnimator.SetBool("MenuIn", false); // Ensure the menu is not visible at the start
         yield return StartCoroutine(ShowCompanyLogo());
-        
+
         backgroundAnimator.SetBool("isOpen", true);
         Debug.Log("Fade in animation started");
         yield return new WaitForSeconds(3f);
 
         yield return StartCoroutine(StartingCutscene());
-
-
     }
+    /// <summary>
+    /// Starts the cutscene sequence.
+    /// </summary>
     private IEnumerator StartingCutscene()
     {
         myCar = GameObject.Find("car");

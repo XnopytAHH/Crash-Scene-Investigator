@@ -1,6 +1,6 @@
 /*
 * Author: Lim En Xu Jayson
-* Date: 9/6/2025
+* Date: 16/8/2025
 * Description: Handles the behavior of collectible items in the game.
 */
 using UnityEngine;
@@ -16,12 +16,15 @@ public class CollectibleBehavior : MonoBehaviour
     public Vector3 originalPos;
 
     /// <summary>
-    /// Highlights the collectible by changing its color.
+    /// saves original position
     /// </summary>
     void Start()
     {
         originalPos = transform.position;
     }
+    /// <summary>
+    /// Highlights the collectible by changing its color.
+    /// </summary>
     public void Highlight()
     {
         gameObject.GetComponent<Outline>().enabled = true; // Enable the outline component

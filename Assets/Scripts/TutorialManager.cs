@@ -1,3 +1,8 @@
+/*
+* Author: Lim En Xu Jayson
+* Date: 16/8/2025
+* Description: Animates the tutorial and manages the tutorial dialogue.
+*/
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -5,12 +10,25 @@ using UnityEngine.VFX;
 
 public class TutorialManager : MonoBehaviour
 {
-    
+    /// <summary>
+    /// Reference to the player GameObject.
+    /// </summary>
     private GameObject player;
+    /// <summary>
+    /// Reference to the big boss NPC.
+    /// </summary>
     private NPCBehavior bigBoss;
+    /// <summary>
+    /// Reference to the big boss NPC's animator.
+    /// </summary>
     private Animator bigBossAnimator;
+    /// <summary>
+    /// Reference to the death spawn particles effect.
+    /// </summary>
     private VisualEffect deathSpawnParticles;
-
+    /// <summary>
+    /// Starts the tutorial sequence.
+    /// </summary>
     public IEnumerator StartTutorial()
     {
         player = GameObject.Find("Player");

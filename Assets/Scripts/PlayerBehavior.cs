@@ -1,3 +1,8 @@
+/*
+* Author: Lim En Xu Jayson
+* Date: 16/8/2025
+* Description: Handles the game logic for player interactions.
+*/
 using System.Collections;
 using UnityEngine;
 using System.Linq;
@@ -54,7 +59,9 @@ public class PlayerBehavior : MonoBehaviour
     /// </summary>
     public bool hasFile = false; // Flag to check if the player has a case file
     List<GameObject> talkedToNPCs;
-
+    /// <summary>
+    /// Start is called before the first frame update.
+    /// </summary>
     void Start()
     {
         playerInventory = new List<Evidence>();
@@ -63,7 +70,9 @@ public class PlayerBehavior : MonoBehaviour
         caseFile.SetActive(false); // Ensure the case file is initially hidden
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Update is called once per frame. Mainly used for raycasting.
+    /// </summary>
     void Update()
     {
         RaycastHit hitInfo;
@@ -118,6 +127,9 @@ public class PlayerBehavior : MonoBehaviour
             currentCollectible = null; // Reset currentCollectible if no hit detected
         }
     }
+    /// <summary>
+    /// Called when the player presses the interact button.
+    /// </summary>
     void OnInteract()
     {
         if (!isBusy)
@@ -191,7 +203,10 @@ public class PlayerBehavior : MonoBehaviour
             }
         }
     }
-    public void modifyInventory(bool add, string item,string desc, Texture2D itemImage)
+    /// <summary>
+    /// Modifies the player's inventory by adding or removing items.
+    /// </summary>
+    public void modifyInventory(bool add, string item, string desc, Texture2D itemImage)
     {
         // This method can be used to modify the player's inventory based on the add parameter
         if (add)
@@ -210,6 +225,9 @@ public class PlayerBehavior : MonoBehaviour
 
         }
     }
+    /// <summary>
+    /// Called when the game is paused or unpaused. Called when pressing the pause button
+    /// </summary>
     void OnPause()
     {
         if (GameManager.Instance.isPaused)
@@ -223,6 +241,9 @@ public class PlayerBehavior : MonoBehaviour
             GameManager.Instance.pauseGame(); // Pause the game if it is not paused
         }
     }
+    /// <summary>
+    /// Called when the player presses the open inventory button.
+    /// </summary>
     public void OnOpenInventory()
     {
         if (hasFile)
@@ -247,7 +268,7 @@ public class PlayerBehavior : MonoBehaviour
             {
                 GameManager.Instance.StartCoroutine("pingFile"); // Notify the player that they do not have a case fileUI
             }
-           
+
         }
     }
 }

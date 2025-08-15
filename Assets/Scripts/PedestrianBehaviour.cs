@@ -1,3 +1,8 @@
+/*
+* Author: Emilie Tee Jing Hui
+* Date: 16/8/2025
+* Description: FSM behaviour for pedestrian NPCs
+*/
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
@@ -7,23 +12,64 @@ using Unity.VisualScripting;
 
 public class PedestrianBehaviour : MonoBehaviour
 {
+    /// <summary>
+    /// Reference to the main camera transform
+    /// </summary>
     Transform MainCamera;
+    /// <summary>
+    /// Reference to the player UI canvas transform
+    /// </summary>
     Transform playerUICanvas;
+    /// <summary>
+    /// Reference to the textbox prefab for displaying dialogue
+    /// </summary>
     [SerializeField] GameObject textboxPrefab;
+    /// <summary>
+    /// Reference to the NavMeshAgent component for pathfinding
+    /// </summary>
 
     NavMeshAgent pedestrianAgent;
+    /// <summary>
+    /// Reference to the target transform for the pedestrian
+    /// </summary>
     Transform targetTransform;
+    /// <summary>
+    /// The current state of the pedestrian NPC
+    /// </summary>
     public string currentState;
+    /// <summary>
+    /// Reference to the array of possible end points for the pedestrian
+    /// </summary>
 
     [SerializeField] Transform[] endPoint;
+    /// <summary>
+    /// The index of the current end point for the pedestrian
+    /// </summary>
     public int endPointIndex = 0;
+    /// <summary>
+    /// Indicates whether the pedestrian is waiting for the traffic light to change.
+    /// </summary>
 
     bool waitingForLight = false;
+    /// <summary>
+    /// Indicates whether the pedestrian is currently talking.
+    /// </summary>
     bool isTalking = false;
-
+    /// <summary>
+    /// Reference to the array of background NPC lines for dialogue.
+    /// </summary>
     public string[] backgroundNPCLines;
+    /// <summary>
+    /// Reference to the dialogue box prefab for displaying NPC dialogue.
+    /// </summary>
     GameObject myDialogue= null;
-    [SerializeField] float textOffset = 1.5f; // Offset for the
+    /// <summary>
+    /// Reference to the text box position for displaying dialogue.
+    /// </summary>
+    [SerializeField] float textOffset = 1.5f;
+    /// <summary>
+    /// Reference to the text box position for displaying dialogue.
+    /// </summary>
     [SerializeField] 
     Transform textBoxPosition;
     
@@ -31,6 +77,9 @@ public class PedestrianBehaviour : MonoBehaviour
     /// atLight is a boolean that indicates whether the pedestrian is currently at a traffic light.
     /// </summary>
     bool atLight = false;
+    /// <summary>
+    /// Initializes the pedestrian behaviour.
+    /// </summary>
     void Awake()
     {
         MainCamera = Camera.main.transform;
@@ -47,6 +96,10 @@ public class PedestrianBehaviour : MonoBehaviour
 
         StartCoroutine(SwitchState("Idle"));
     }
+    /// <summary>
+    /// Switches the current state of the pedestrian.
+    /// </summary>
+    
 
     IEnumerator SwitchState(string newState)
     {
@@ -54,7 +107,9 @@ public class PedestrianBehaviour : MonoBehaviour
         currentState = newState;
         StartCoroutine(newState);
     }
-
+    /// <summary>
+    /// Coroutine for the idle state of the pedestrian.
+    /// </summary>
     IEnumerator Idle()
     {
         while (currentState == "Idle")
@@ -85,7 +140,9 @@ public class PedestrianBehaviour : MonoBehaviour
             }
         }
     }
-
+    /// <summary>
+    /// Coroutine for the walking state of the pedestrian.
+    /// </summary>
     IEnumerator Walking()
     {
         while (currentState == "Walking")
@@ -101,6 +158,9 @@ public class PedestrianBehaviour : MonoBehaviour
             yield return null;
         }
     }
+    /// <summary>
+    /// Called when the pedestrian enters a trigger collider.
+    /// </summary>
 
     void OnTriggerEnter(Collider other)
     {
@@ -116,11 +176,16 @@ public class PedestrianBehaviour : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// Called when the pedestrian exits a trigger collider.
+    /// </summary>
     void OnTriggerExit(Collider other)
     {
         atLight = false;
     }
-
+    /// <summary>
+    /// Called when the pedestrian is within a trigger collider.
+    /// </summary>
     void OnTriggerStay(Collider other)
     {
 
@@ -131,7 +196,9 @@ public class PedestrianBehaviour : MonoBehaviour
             StartCoroutine(SwitchState("Walking"));
         }
     }
-
+    /// <summary>
+    /// Coroutine for showing dialogue state
+    /// </summary>
     public IEnumerator ShowDialogue()
     {
         if (isTalking) yield break; // Prevent overlapping dialogues
@@ -179,7 +246,9 @@ public class PedestrianBehaviour : MonoBehaviour
         Destroy(myDialogue);
         yield break;
     }
-
+    /// <summary>
+    /// Coroutine for stopping dialogue.
+    /// </summary>
     IEnumerator stopTalking(GameObject myDialogue)
     {
         yield return new WaitForSeconds(3f);

@@ -1,3 +1,8 @@
+/*
+* Author: Lim En Xu Jayson
+* Date: 15/8/2025
+* Description: Code to manage the case file UI and interactions.
+*/
 using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.UI;
@@ -58,6 +63,9 @@ public class CaseFile : MonoBehaviour
         // Logic to add evidence to the case file
         Debug.Log("Evidence added: " + evidence.evidenceName);
     }
+    /// <summary>
+    /// Clears all evidence from the case file.
+    /// </summary>
     public void ClearEvidence()
     {
         GameObject evidenceCanvas = GameObject.Find("EvidenceCanvas"); // Find the evidence canvas
@@ -70,6 +78,9 @@ public class CaseFile : MonoBehaviour
         }
         Debug.Log("All evidence cleared from the case file.");
     }
+    /// <summary>
+    /// Updates the details of the case file.
+    /// </summary>
     public void UpdateDetails(string title, string date, string culprit1, string culprit2, Sprite accidentPhoto)
     {
         ClearEvidence(); // Clear existing evidence
@@ -83,6 +94,9 @@ public class CaseFile : MonoBehaviour
         Debug.Log("Case file details updated.");
 
     }
+    /// <summary>
+    /// Update runs every frame, checking which button should be active depending on the scene.
+    /// </summary>
     void Update()
     {
         if (SceneManager.GetActiveScene().name == "office" && !GameManager.Instance.beenToLevel) // Check if the active scene is the office

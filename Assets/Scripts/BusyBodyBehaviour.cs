@@ -1,4 +1,8 @@
-
+/*
+* Author: Lim En Xu Jayson
+* Date: 15/8/2025
+* Description: FSM for busybody NPC behavior
+*/
 using UnityEngine;
 using System.Collections;
 using UnityEngine.AI;
@@ -6,24 +10,59 @@ using UnityEngine.VFX;
 
 public class BusyBodyBehaviour : MonoBehaviour
 {
+    /// <summary>
+    /// Reference to the NavMeshAgent component.
+    /// </summary>
     NavMeshAgent pedestrianAgent;
+    /// <summary>
+    /// Reference to the target transform (the next endpoint).
+    /// </summary>
     Transform targetTransform;
+    /// <summary>
+    /// Reference to the current state of the NPC.
+    /// </summary>
 
     public string currentState;
+    /// <summary>
+    /// Array of transform points representing the NPC's path.
+    /// </summary>
 
     [SerializeField] Transform[] endPoint;
+    /// <summary>
+    /// Index of the current endpoint in the array.
+    /// </summary>
     public int endPointIndex = 0;
+    /// <summary>
+    /// Indicates whether the NPC is waiting for a traffic light to change.
+    /// </summary>
 
     bool waitingForLight = false;
+    /// <summary>
+    /// Reference to the evidence object the NPC is tracking
+    /// </summary>
 
     [SerializeField] GameObject targetEvidence = null;
+    /// <summary>
+    /// Reference to the evidence object the NPC is currently holding.
+    /// </summary>
 
     public GameObject heldEvidence = null;
+    /// <summary>
+    /// Reference to the position where the evidence is held.
+    /// </summary>
     [SerializeField] Transform holdPosition = null;
-
+    /// <summary>
+    /// Coroutine for managing the NPC's state.
+    /// </summary>
     Coroutine stateRoutine;
+    /// <summary>
+    /// Reference to the visual effect played when the NPC is holding evidence.
+    /// </summary>
     [SerializeField] VisualEffect evidenceEffect;
 
+    /// <summary>
+    /// Initializes the NPC's behavior.
+    /// </summary>
     void Awake()
     {
         pedestrianAgent = GetComponent<NavMeshAgent>();
@@ -31,7 +70,9 @@ public class BusyBodyBehaviour : MonoBehaviour
         ChangeState("Idle");
     }
 
-
+     /// <summary>
+    /// Changes the current state of the NPC.
+    /// </summary>
     void ChangeState(string newState)
     {
         if (currentState == newState)
@@ -44,7 +85,9 @@ public class BusyBodyBehaviour : MonoBehaviour
 
         stateRoutine = StartCoroutine(newState);
     }
-
+    /// <summary>
+    /// Updates the target transform for the NPC's movement.
+    /// </summary>
     void UpdateTargetTransform()
     {
         if (endPoint.Length == 0) return;
@@ -52,7 +95,9 @@ public class BusyBodyBehaviour : MonoBehaviour
         targetTransform = endPoint[endPointIndex];
     }
 
-
+    /// <summary>
+    /// Coroutine for the Idle state.
+    /// </summary>
     IEnumerator Idle()
     {
         pedestrianAgent.isStopped = true;
@@ -66,7 +111,6 @@ public class BusyBodyBehaviour : MonoBehaviour
             {
                 if (!waitingForLight)
                 {
-                    Debug.Log("Switching to walk after 2s");
                     yield return new WaitForSeconds(2f);
                     ChangeState("Walking");
                 }
@@ -89,6 +133,9 @@ public class BusyBodyBehaviour : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Coroutine for the Walking state.
+    /// </summary>
     IEnumerator Walking()
     {
         pedestrianAgent.isStopped = false;
@@ -105,6 +152,9 @@ public class BusyBodyBehaviour : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Coroutine for the Blocking state.
+    /// </summary>
     IEnumerator Blocking()
     {
         pedestrianAgent.isStopped = false; // ensure movement is enabled
@@ -112,7 +162,6 @@ public class BusyBodyBehaviour : MonoBehaviour
         while (currentState == "Blocking")
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
-            Debug.Log("Blocking state active");
             if (player != null)
             {
                 // Midpoint between player and evidence
@@ -135,13 +184,18 @@ public class BusyBodyBehaviour : MonoBehaviour
     
     
 }
-
+    /// <summary>
+    /// Coroutine for the Blocking Timer.
+    /// </summary>
     IEnumerator BlockingTimer()
     {
         yield return new WaitForSeconds(10f);
         ChangeState("Stealing");
     }
 
+    /// <summary>
+    /// Coroutine for the Stealing state.
+    /// </summary>
     IEnumerator Stealing()
     {
         while (currentState == "Stealing")
@@ -156,7 +210,6 @@ public class BusyBodyBehaviour : MonoBehaviour
 
             if (Mathf.Approximately(transform.position.x, targetEvidence.transform.position.x) && Mathf.Approximately(transform.position.z, targetEvidence.transform.position.z))
             {
-                Debug.Log("Stealing evidence: " + targetEvidence.name);
                 heldEvidence = targetEvidence;
                 targetEvidence.GetComponent<Rigidbody>().isKinematic = true;
                 targetEvidence.GetComponent<Outline>().enabled = true;
@@ -170,7 +223,10 @@ public class BusyBodyBehaviour : MonoBehaviour
             yield return null;
         }
     }
-    
+
+    /// <summary>
+    /// Drops the currently held evidence item.
+    /// </summary>
     public void DropItem()
     {
         if (heldEvidence != null)

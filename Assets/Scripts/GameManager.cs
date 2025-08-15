@@ -1,3 +1,8 @@
+/*
+* Author: Lim En Xu Jayson
+* Date: 16/8/2025
+* Description: Handles the majority of game logic and state management.
+*/
 using UnityEngine;
 using System.Collections;
 using UnityEngine.InputSystem.Controls;
@@ -21,9 +26,18 @@ public class GameManager : MonoBehaviour
     /// </summary>
     [SerializeField]
     private SoundManager soundManager;
+    /// <summary>
+    /// dialogueSpeed is a float that represents the speed of the dialogue text appearing.
+    /// </summary>
     [SerializeField]
-    private float dialogueSpeed = 0.05f; // Speed of dialogue text appearing
+    private float dialogueSpeed = 0.05f; 
+    /// <summary>
+    /// Instance is a static reference to the GameManager instance so that it is easily accessible from other scripts.
+    /// </summary>
     public static GameManager Instance;
+    /// <summary>
+    /// audioSource is a reference to the AudioSource component that plays the game's audio.
+    /// </summary>
     [SerializeField]
     private AudioSource audioSource;
     /// <summary>
@@ -280,6 +294,9 @@ public class GameManager : MonoBehaviour
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
+    /// <summary>
+    /// Awake is called when the script instance is being loaded
+    /// </summary>
     void Awake()
     {
 
@@ -306,6 +323,9 @@ public class GameManager : MonoBehaviour
             Instance = this;
         }
     }
+    /// <summary>
+    /// Update is called once per frame
+    /// </summary>
     void Update()
     {
 
@@ -352,6 +372,9 @@ public class GameManager : MonoBehaviour
 
 
     }
+    /// <summary>
+    /// OnSceneLoaded is called when a new scene is loaded to initialize level elements
+    /// </summary>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         endingScreen.enabled = false; // Disable the ending screen at the start
@@ -498,6 +521,9 @@ public class GameManager : MonoBehaviour
 
 
     }
+    /// <summary>
+    /// StartTutorial is a coroutine that initiates the tutorial sequence.
+    /// </summary>
     public IEnumerator StartTutorial()
     {
         Time.timeScale = 1; // Pause the game at the start of the tutorial
@@ -547,6 +573,9 @@ public class GameManager : MonoBehaviour
         StartCoroutine(StartGameCoroutine()); // Start the game coroutine to transition to the office scene
 
     }
+    /// <summary>
+    /// transitionToNewScene is a coroutine that handles the transition effects when changing scenes.
+    /// </summary>
     IEnumerator transitionToNewScene()
     {
 
@@ -572,28 +601,37 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(0.01f); // Wait for a short duration to create a smooth transition
         }
     }
+    /// <summary>
+    /// StartGame is called to initiate the game from the main menu
+    /// </summary>
     public void StartGame()
     {
 
-        Debug.Log("Game Started");
+        
         startingNewDay = true; // Set the flag to indicate a new day is starting
         Cursor.lockState = CursorLockMode.Locked; // Lock the cursor at the start
-        Debug.Log("Starting new day: " + currentLevel);
+        
         SceneManager.LoadScene("Intro");
     }
+    /// <summary>
+    /// StartGameCoroutine is a coroutine that handles the game startup sequence.
+    /// </summary>
     IEnumerator StartGameCoroutine()
     {
-        Debug.Log("Game Started 1");
+        
         Time.timeScale = 1; // Ensure the game is running at normal speed
         backgroundAnimator.SetBool("isOpen", false); // Close the background UI
         yield return new WaitForSeconds(2f); // Wait for 2 seconds before starting the game
-        Debug.Log("Game Started 1");
+        
         currentLevel = 1; // Set the current level to 1 when the game starts
         UnityEngine.SceneManagement.SceneManager.LoadScene("office"); // Load the first level
 
         Cursor.lockState = CursorLockMode.Locked; // Lock the cursor to the game window
         yield return null; // Wait for the end of the frame to ensure everything is set up correctly
     }
+    /// <summary>
+    /// ExitGame is called to quit the application.
+    /// </summary>
     public void ExitGame()
     {
         Application.Quit();
@@ -601,6 +639,9 @@ public class GameManager : MonoBehaviour
         UnityEditor.EditorApplication.isPlaying = false; // Stop playing in the editor
 #endif
     }
+    /// <summary>
+    /// NPCDialogue is a coroutine that handles the dialogue with a NPC.
+    /// </summary>
     public IEnumerator NPCDialogue(GameObject npc, Dialogue dialogueLines)
     {
         GameObject player = GameObject.FindWithTag("Player");
@@ -633,6 +674,9 @@ public class GameManager : MonoBehaviour
         player.GetComponent<FirstPersonController>().enabled = true;
         dialogueUI.enabled = false; // Hide the dialogue UI
     }
+    /// <summary>
+    /// stepThruDialogue is a coroutine that displays the dialogue line one character at a time.
+    /// </summary>
     private IEnumerator stepThruDialogue(TextMeshProUGUI textbox, float delay, DialogueLine line)
     {
         textbox.text = ""; // Clear the textbox before starting
@@ -657,6 +701,9 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(delay); // Wait for the specified delay
         }
     }
+    /// <summary>
+    /// pauseGame is called to pause the game.
+    /// </summary>
     public void pauseGame()
     {
         Time.timeScale = 0; // Pause the game
@@ -666,6 +713,9 @@ public class GameManager : MonoBehaviour
         isPaused = true; // Set the paused state to true
 
     }
+    /// <summary>
+    /// resumeGame is called to resume the game after being paused.
+    /// </summary>
     public void resumeGame()
     {
         Cursor.lockState = CursorLockMode.Locked; // Lock the cursor again
@@ -674,6 +724,9 @@ public class GameManager : MonoBehaviour
 
         isPaused = false; // Set the paused state to false
     }
+    /// <summary>
+    /// returnToMainMenu is called to load the main menu scene.
+    /// </summary>
     public void returnToMainMenu()
     {
 
@@ -682,29 +735,44 @@ public class GameManager : MonoBehaviour
         resumeGame(); // Resume the game to ensure the pause menu is closed
 
     }
+    /// <summary>
+    /// openCaseFile is called to open the case file UI.
+    /// </summary>
     public void openCaseFile()
     {
-        
+
         caseFileCanvas.enabled = true; // Show the case file canvas
         isPaused = true; // Set the paused state to true when the case file is open
         crosshair.enabled = false; // Disable the crosshair when the case file is open
     }
+    /// <summary>
+    /// closeCaseFile is called to close the case file UI.
+    /// </summary>
     public void closeCaseFile()
     {
         caseFileCanvas.enabled = false; // Hide the case file canvas
-        isPaused = false; // Set the paused state to true when the case file is open
+        isPaused = false; // Set the paused state to false when the case file is closed
         crosshair.enabled = true; // Enable the crosshair when the case file is closed
         closeOptions(); // Close the options menu if it is open
     }
+    /// <summary>
+    /// openOptions is called to open the options menu.
+    /// </summary>
     public void openOptions()
     {
         optionsMenu.SetActive(true); // Show the options menu
-        
+
     }
+    /// <summary>
+    /// closeOptions is called to close the options menu.
+    /// </summary>
     public void closeOptions()
     {
         optionsMenu.SetActive(false); // Hide the options menu
     }
+    /// <summary>
+    /// StartDayCoroutine is called to start the day sequence. This starts a level
+    /// </summary>
     private IEnumerator StartDayCoroutine()
     {
         // UI for new day
@@ -755,6 +823,9 @@ public class GameManager : MonoBehaviour
 
         caseFileObject.SetActive(true); // Show the case file object after starting the day
     }
+    /// <summary>
+    /// initiateLevel is called to start the level sequence.
+    /// </summary>
     public void initiateLevel()
     {
         if (SceneManager.GetActiveScene().name == "Tutorial")
@@ -763,6 +834,9 @@ public class GameManager : MonoBehaviour
         }
         StartCoroutine(changeLevel());
     }
+    /// <summary>
+    /// changeLevel is called to change scene to the current level.
+    /// </summary>
     IEnumerator changeLevel()
     {
         yield return ExitTransition(); // Start the exit transition
@@ -770,6 +844,9 @@ public class GameManager : MonoBehaviour
         isPaused = false; // Set the paused state to false when changing levels
         beenToLevel = true; // S
     }
+    /// <summary>
+    /// StartLevel is called to start the level sequence.
+    /// </summary>
     private IEnumerator StartLevel()
     {
         TrafficControl trafficControl = GameObject.FindWithTag("TrafficControl").GetComponent<TrafficControl>();
@@ -777,16 +854,16 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1f); // Wait for 1 second before starting the level
         Cursor.lockState = CursorLockMode.Locked; // Lock the cursor to the game window
         player = GameObject.FindWithTag("Player"); // Find the player GameObject
-        player.GetComponent<FirstPersonController>().enabled = false; 
+        player.GetComponent<FirstPersonController>().enabled = false;
         player.GetComponent<PlayerBehavior>().isBusy = true; // Set the player as busy while starting the level
         CinemachineCamera vcam = GameObject.Find("PlayerFollowCamera").GetComponent<Unity.Cinemachine.CinemachineCamera>();
         CinemachineCamera cutscam = GameObject.FindWithTag("CutsceneCamera").GetComponent<Unity.Cinemachine.CinemachineCamera>();
         vcam.Priority = 10;
         cutscam.Priority = 20;
         crosshair.enabled = false; // Disable the crosshair at the start of the level
-    
+
         yield return LevelCutscene(); // Start the level cutscene
-        
+
         vcam.Priority = 20;
         cutscam.Priority = 10;
         yield return new WaitForSeconds(3f); // Wait for 1 second to allow the cutscene to play
@@ -796,6 +873,10 @@ public class GameManager : MonoBehaviour
         StartCoroutine(LevelTimer()); // Start the level timer coroutine
 
     }
+    /// <summary>
+    /// LevelCutscene is called to start the accident cutscene at the beginning of each level
+    /// </summary>
+    
     private IEnumerator LevelCutscene()
     {
         inCutscene = true; // Set the cutscene state to true
@@ -809,14 +890,23 @@ public class GameManager : MonoBehaviour
         }
 
     }
+    /// <summary>
+    /// EndCutscene is called by the cutscene animator to indicate the cutscene is over.
+    /// </summary>
     public void EndCutscene()
     {
         inCutscene = false;
     }
+    /// <summary>
+    /// Impact is called to create an explosion effect at the impact point. Ended up being unused in the final game.
+    /// </summary>
     public void Impact()
     {
         Instantiate(explosionPrefab, GameObject.FindWithTag("Impact").transform.position, Quaternion.identity); // Instantiate the explosion effect at the impact point's position
     }
+    /// <summary>
+    /// LevelTimer is called to start the level timer.
+    /// </summary>
     private IEnumerator LevelTimer()
     {
         timer = levelTimer; // Set the timer to the level time
@@ -860,6 +950,10 @@ public class GameManager : MonoBehaviour
         // Logic to end the level or transition to the next level can be added here
         yield return null; // Wait for the end of the frame to ensure everything is set up correctly
     }
+    /// <summary>
+    /// VignettePulse is called to create a pulsing effect on the vignette when the player is running out of time
+    /// </summary>
+
     IEnumerator vignettePulse()
     {
         if (pulsing)
@@ -887,14 +981,17 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// ExitTransition is called to start the exit transition out of a scene
+    /// </summary>
     public IEnumerator ExitTransition()
     {
         if (player.GetComponent<PlayerBehavior>().caseFile.activeSelf)
         {
-         player.GetComponent<PlayerBehavior>().OnOpenInventory(); // Close the case file if it is open
+            player.GetComponent<PlayerBehavior>().OnOpenInventory(); // Close the case file if it is open
         }
-        
-       
+
+
         player.GetComponent<FirstPersonController>().enabled = false; // Disable the character controller to prevent movement
         player.GetComponent<PlayerBehavior>().isBusy = true; // Set the player as busy during the exit sequence
         if (volumeProfile.TryGet(out Vignette vignetteEffect))
@@ -917,6 +1014,9 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(0.05f); // Wait for a short duration to create a smooth transition
         }
     }
+    /// <summary>
+    /// ExitSequence is called to start the exit sequence out of a scene.
+    /// </summary>
     public IEnumerator ExitSequence()
     {
         timerUI.enabled = false; // Disable the timer UI
@@ -927,6 +1027,9 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1f); // Wait for 1 second before continuing
         player.GetComponent<PlayerBehavior>().isBusy = false; // Set the player as not busy after the exit sequence
     }
+    /// <summary>
+    /// ExitLevel is called to initiate the exit process for the current level.
+    /// </summary>
     public void ExitLevel()
     {
         StopAllCoroutines(); // Stop all coroutines
@@ -934,6 +1037,9 @@ public class GameManager : MonoBehaviour
         StartCoroutine(ExitSequence()); // Start the exit sequence when the player exits the level
 
     }
+    /// <summary>
+    /// PingFile is called to create a ping effect on the case file if players do not pick it up and try to open the menu
+    /// </summary>
     public IEnumerator pingFile()
     {
         GameManager.Instance.pingRunning = true; // Set the ping effect as running
@@ -955,6 +1061,9 @@ public class GameManager : MonoBehaviour
         Debug.Log("Case file pinged.");
         GameManager.Instance.pingRunning = false; // Set the ping effect as not running
     }
+    /// <summary>
+    /// ChangeCause is called to change the current cause. It is activated when the player selects a new cause toggle
+    /// </summary>
     public void ChangeCause(Toggle toggle)
     {
         if (toggle != currentCause)
@@ -973,9 +1082,12 @@ public class GameManager : MonoBehaviour
             currentCause = null; // Reset the current cause to null
         }
     }
+    /// <summary>
+    /// CheckCompletion is called to check if the current investigation is complete.
+    /// </summary>
     public bool CheckCompletion()
     {
-        
+
         if (currentCause != null && culpritDropdown.value != 0)
         {
             Debug.Log("Cause selected: " + currentCause.name + ", Culprit selected: " + culpritDropdown.options[culpritDropdown.value].text);
@@ -988,9 +1100,12 @@ public class GameManager : MonoBehaviour
             return false; // Return false if no cause is selected
         }
     }
+    /// <summary>
+    /// EndDay is called to initiate the end of the current day and display the end of day summary.
+    /// </summary>
     public IEnumerator EndDay()
     {
-        
+
         backgroundAnimator.Play("open", 0, 0f); // Play the fade-in animation immediately
         backgroundAnimator.SetBool("isOpen", false); // Close the background UI
         player.GetComponent<FirstPersonController>().enabled = false; // Disable the character controller to prevent movement
@@ -1113,6 +1228,10 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None; // Unlock the cursor when the end screen is displayed
         yield return null; // Wait for the end of the frame to ensure everything is set up correctly
     }
+
+    /// <summary>
+    /// StepThru is called to display text one character at a time.
+    /// </summary>
     private IEnumerator stepThru(TextMeshProUGUI textbox, float delay, string line)
     {
         textbox.text = ""; // Clear the textbox before starting
@@ -1132,6 +1251,9 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(delay); // Wait for the specified delay
         }
     }
+    /// <summary>
+    /// NextLevel is called to advance to the next level.
+    /// </summary>
     public void NextLevel()
     {
         currentLevel++;
